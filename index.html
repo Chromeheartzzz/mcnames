@@ -58,9 +58,11 @@ background:#020617;
 color:white;
 }
 
-/* TABS */
+/* ✅ CENTERED TABS */
 .tabs{
 display:flex;
+justify-content:center;   /* CENTER FIX */
+align-items:center;
 gap:10px;
 padding:15px;
 flex-wrap:wrap;
@@ -72,10 +74,16 @@ background:#020617;
 border:1px solid #1e293b;
 border-radius:10px;
 cursor:pointer;
+transition:.2s;
+}
+
+.tab:hover{
+background:#1e293b;
 }
 
 .tab.active{
 background:#1e293b;
+box-shadow:0 0 10px rgba(255,255,255,0.1);
 }
 
 /* LIST */
@@ -86,7 +94,6 @@ margin:auto;
 
 .row{
 display:flex;
-justify-content:space-between;
 align-items:center;
 padding:18px;
 margin:10px 0;
@@ -99,6 +106,7 @@ border:1px solid #1e293b;
 display:flex;
 align-items:center;
 gap:15px;
+min-width:200px;
 }
 
 .rank{
@@ -125,9 +133,13 @@ transition:.2s;
 transform:scale(1.15);
 }
 
+/* CENTER ICONS IN ROW */
 .modes{
 display:flex;
-gap:10px;
+justify-content:center;
+align-items:center;
+gap:12px;
+flex:1;
 }
 
 .mode{
@@ -205,8 +217,8 @@ background:#5865F2;
 </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs" id="tabs">
+<!-- CENTERED TABS -->
+<div class="tabs">
 <div class="tab active" data-mode="overall">🏆 Overall</div>
 <div class="tab" data-mode="0">🔮</div>
 <div class="tab" data-mode="1">🗡</div>
@@ -223,9 +235,7 @@ background:#5865F2;
 <!-- ADMIN PANEL -->
 <div class="panel" id="panel">
 <input id="name" placeholder="Player Name">
-
-<input id="tiers" placeholder="Tiers (HT1,LT1,HT2...)">
-
+<input id="tiers" placeholder="HT1,LT1,HT2...">
 <button onclick="addPlayer()">Add Player</button>
 <button onclick="removePlayer()">Remove Player</button>
 <button onclick="updatePlayer()">Update Tiers</button>
@@ -245,7 +255,6 @@ let players = [
 const list = document.getElementById("list");
 const search = document.querySelector(".search");
 
-/* RENDER */
 function render(filter=""){
 list.innerHTML="";
 
@@ -253,24 +262,14 @@ let filtered = players.filter(p =>
 p.name.toLowerCase().includes(filter.toLowerCase())
 );
 
-if(currentMode !== "overall"){
-filtered.sort((a,b)=>{
-return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
-});
-}
-
 filtered.forEach((p,i)=>{
 
-let content = currentMode === "overall"
-? modes.map((icon,index)=>`
+let modesHTML = modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier">${p.tiers[index]}</div>
-</div>`).join("")
-: `<div class="mode">
-<div class="icon">${modes[currentMode]}</div>
-<div class="tier">${p.tiers[currentMode]}</div>
-</div>`;
+</div>
+`).join("");
 
 let row = document.createElement("div");
 row.className="row";
@@ -284,60 +283,40 @@ row.innerHTML=`
 </div>
 </div>
 
-<div class="modes">${content}</div>
+<div class="modes">${modesHTML}</div>
 `;
 
 list.appendChild(row);
-
 });
 }
 
 render();
 
-/* SEARCH */
-search.addEventListener("input", e=> render(e.target.value));
+search.addEventListener("input", e=>render(e.target.value));
 
-/* TABS */
-document.querySelectorAll(".tab").forEach(tab=>{
-tab.onclick=()=>{
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-tab.classList.add("active");
-
-currentMode = tab.dataset.mode === "overall"
-? "overall"
-: Number(tab.dataset.mode);
-
-render(search.value);
-};
-});
-
-/* ADMIN PANEL */
 function togglePanel(){
-const p = document.getElementById("panel");
-p.style.display = p.style.display === "flex" ? "none" : "flex";
+let p = document.getElementById("panel");
+p.style.display = p.style.display==="flex" ? "none":"flex";
 }
 
 function addPlayer(){
 let name = document.getElementById("name").value;
 let tiers = document.getElementById("tiers").value.split(",");
-
 players.push({name,tiers});
 render();
 }
 
 function removePlayer(){
 let name = document.getElementById("name").value;
-players = players.filter(p=>p.name !== name);
+players = players.filter(p=>p.name!==name);
 render();
 }
 
 function updatePlayer(){
 let name = document.getElementById("name").value;
 let tiers = document.getElementById("tiers").value.split(",");
-
-let p = players.find(p=>p.name === name);
+let p = players.find(p=>p.name===name);
 if(p) p.tiers = tiers;
-
 render();
 }
 
