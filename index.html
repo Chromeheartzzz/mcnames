@@ -34,23 +34,9 @@ background:linear-gradient(
 }
 
 .container{
-max-width:1100px;
+max-width:900px;
 margin:auto;
 padding:10px;
-}
-
-.controls{
-display:flex;
-gap:10px;
-margin-bottom:10px;
-}
-
-input,select{
-padding:8px;
-border-radius:6px;
-border:none;
-background:#111827;
-color:white;
 }
 
 table{
@@ -73,38 +59,29 @@ tr:nth-child(even){
 background:#0f172a;
 }
 
-.rank{
-font-weight:bold;
-}
-
-.tier-badge{
-padding:3px 8px;
+input,select,button{
+padding:8px;
+margin:5px;
+border:none;
 border-radius:6px;
-}
-
-.tier-s{background:red}
-.tier-a{background:orange}
-.tier-b{background:cyan}
-.tier-c{background:gray}
-
-.status-online{
-color:lime;
-}
-
-.status-offline{
-color:red;
-}
-
-.stats{
-display:flex;
-gap:20px;
-margin:10px 0;
-}
-
-.stat{
 background:#111827;
+color:white;
+}
+
+button{
+cursor:pointer;
+background:#2563eb;
+}
+
+.admin{
+margin-top:15px;
+background:#020617;
 padding:10px;
-border-radius:8px;
+border:1px solid #111827;
+}
+
+.tier{
+font-weight:bold;
 }
 
 </style>
@@ -116,47 +93,13 @@ border-radius:8px;
 
 <div class="container">
 
-<div class="controls">
-
-<input id="searchInput" placeholder="Search player">
-
-<select id="tierFilter">
-<option value="">All tiers</option>
-<option>S</option>
-<option>A</option>
-<option>B</option>
-<option>C</option>
-</select>
-
-</div>
-
-<div class="stats">
-
-<div class="stat">
-Players: <span id="playerCount"></span>
-</div>
-
-<div class="stat">
-Avg Rating: <span id="avgRating"></span>
-</div>
-
-<div class="stat">
-Tiers: <span id="tierCount"></span>
-</div>
-
-</div>
-
 <table>
 
 <thead>
 <tr>
 <th>#</th>
-<th>Name</th>
+<th>Player</th>
 <th>Tier</th>
-<th>Rating</th>
-<th>Wins</th>
-<th>KD</th>
-<th>Status</th>
 </tr>
 </thead>
 
@@ -165,106 +108,76 @@ Tiers: <span id="tierCount"></span>
 
 </table>
 
+
+<div class="admin">
+
+<h3>Admin Panel (only you use this)</h3>
+
+<input id="playerName" placeholder="Player name">
+
+<input id="playerTier" placeholder="Tier (HT1, LT1, etc)">
+
+<button onclick="setTier()">Set Tier</button>
+
+</div>
+
 </div>
 
 
 <script>
 
-// paste your script here exactly
+let players = [
 
-// Sample Player Data
-const playersData = [
-{rank:1,name:"ChromeKing",tier:"S",rating:2850,wins:1284,kd:3.45,status:"online"},
-{rank:2,name:"SkyPvP",tier:"S",rating:2760,wins:1156,kd:3.12,status:"online"},
-{rank:3,name:"NeonSlayer",tier:"S",rating:2650,wins:1089,kd:2.98,status:"offline"},
-{rank:4,name:"TitanForce",tier:"A",rating:2480,wins:987,kd:2.75,status:"online"},
-{rank:5,name:"PhantomStrike",tier:"A",rating:2390,wins:892,kd:2.56,status:"online"},
-{rank:6,name:"VortexMaster",tier:"A",rating:2280,wins:834,kd:2.41,status:"offline"},
-{rank:7,name:"BlazeFury",tier:"A",rating:2150,wins:756,kd:2.28,status:"online"},
-{rank:8,name:"ShadowBeast",tier:"B",rating:2010,wins:678,kd:2.12,status:"online"},
-{rank:9,name:"CrimsonDemon",tier:"B",rating:1890,wins:612,kd:1.95,status:"offline"},
-{rank:10,name:"IceWind",tier:"B",rating:1780,wins:556,kd:1.82,status:"online"},
-{rank:11,name:"ThunderStorm",tier:"B",rating:1650,wins:489,kd:1.68,status:"online"},
-{rank:12,name:"NightHunter",tier:"B",rating:1540,wins:421,kd:1.54,status:"offline"},
-{rank:13,name:"ScarletWolf",tier:"C",rating:1420,wins:356,kd:1.39,status:"online"},
-{rank:14,name:"MythicRaven",tier:"C",rating:1310,wins:298,kd:1.25,status:"online"},
-{rank:15,name:"EchoKnight",tier:"C",rating:1200,wins:245,kd:1.12,status:"offline"}
+{name:"ChromeKing", tier:""},
+{name:"SkyPvP", tier:""},
+{name:"NeonSlayer", tier:""},
+{name:"TitanForce", tier:""},
+{name:"PhantomStrike", tier:""}
+
 ];
 
-const leaderboardBody = document.getElementById('leaderboardBody');
-const searchInput = document.getElementById('searchInput');
-const tierFilter = document.getElementById('tierFilter');
-const playerCountEl = document.getElementById('playerCount');
-const avgRatingEl = document.getElementById('avgRating');
-const tierCountEl = document.getElementById('tierCount');
+const body = document.getElementById("leaderboardBody");
 
-document.addEventListener('DOMContentLoaded', () => {
-renderLeaderboard(playersData);
-updateStats();
-setupEventListeners();
-});
+function render(){
 
-function renderLeaderboard(players){
+body.innerHTML="";
 
-leaderboardBody.innerHTML="";
-
-players.forEach(player=>{
+players.forEach((p,i)=>{
 
 let row=document.createElement("tr");
 
 row.innerHTML=`
-<td>${player.rank}</td>
-<td>${player.name}</td>
-<td><span class="tier-badge tier-${player.tier.toLowerCase()}">${player.tier}</span></td>
-<td>${player.rating}</td>
-<td>${player.wins}</td>
-<td>${player.kd}</td>
-<td class="status-${player.status}">${player.status}</td>
+<td>${i+1}</td>
+<td>${p.name}</td>
+<td class="tier">${p.tier}</td>
 `;
 
-leaderboardBody.appendChild(row);
+body.appendChild(row);
 
 });
 
 }
 
-function updateStats(){
+function setTier(){
 
-playerCountEl.textContent=playersData.length;
+let name=document.getElementById("playerName").value;
+let tier=document.getElementById("playerTier").value;
 
-let avg=Math.round(
-playersData.reduce((s,p)=>s+p.rating,0)/playersData.length
-);
+players.forEach(p=>{
 
-avgRatingEl.textContent=avg;
+if(p.name.toLowerCase()==name.toLowerCase()){
 
-tierCountEl.textContent=
-new Set(playersData.map(p=>p.tier)).size;
+p.tier=tier;
 
 }
-
-function filterPlayers(){
-
-let s=searchInput.value.toLowerCase();
-let t=tierFilter.value;
-
-let filtered=playersData.filter(p=>{
-
-return p.name.toLowerCase().includes(s)
-&& (t=="" || p.tier==t);
 
 });
 
-renderLeaderboard(filtered);
+render();
 
 }
 
-function setupEventListeners(){
-
-searchInput.addEventListener("input",filterPlayers);
-tierFilter.addEventListener("change",filterPlayers);
-
-}
+render();
 
 </script>
 
