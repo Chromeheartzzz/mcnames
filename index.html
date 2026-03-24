@@ -32,6 +32,24 @@ background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
 -webkit-text-fill-color:transparent;
 }
 
+.top-right{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.top-btn{
+padding:8px 12px;
+background:#1e293b;
+border-radius:8px;
+cursor:pointer;
+}
+
+.top-btn:hover{
+background:#5865F2;
+}
+
+/* SEARCH */
 .search{
 padding:10px;
 border-radius:10px;
@@ -101,7 +119,6 @@ gap:12px;
 font-size:20px;
 font-weight:bold;
 transition:.2s;
-cursor:pointer;
 }
 
 .name:hover{
@@ -117,7 +134,6 @@ gap:10px;
 display:flex;
 flex-direction:column;
 align-items:center;
-font-size:12px;
 }
 
 .icon{
@@ -137,17 +153,39 @@ background:linear-gradient(90deg,#e5e7eb,#9ca3af);
 font-weight:bold;
 }
 
-/* DISCORD */
-.discord{
-margin-left:20px;
-padding:8px 12px;
-background:#1e293b;
-border-radius:8px;
-cursor:pointer;
-transition:.2s;
+/* ADMIN PANEL */
+.panel{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#020617;
+padding:20px;
+border-radius:12px;
+border:1px solid #1e293b;
+display:none;
+flex-direction:column;
+gap:10px;
+z-index:1000;
 }
 
-.discord:hover{
+.panel input{
+padding:8px;
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+border-radius:6px;
+}
+
+.panel button{
+padding:8px;
+background:#1e293b;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.panel button:hover{
 background:#5865F2;
 }
 
@@ -156,9 +194,15 @@ background:#5865F2;
 
 <body>
 
+<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
-<input class="search" placeholder="Search player...">
+
+<div class="top-right">
+<div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
+<div class="top-btn" onclick="togglePanel()">Admin Panel</div>
+<input class="search" placeholder="Search...">
+</div>
 </div>
 
 <!-- TABS -->
@@ -176,17 +220,26 @@ background:#5865F2;
 
 <div class="container" id="list"></div>
 
+<!-- ADMIN PANEL -->
+<div class="panel" id="panel">
+<input id="name" placeholder="Player Name">
+
+<input id="tiers" placeholder="Tiers (HT1,LT1,HT2...)">
+
+<button onclick="addPlayer()">Add Player</button>
+<button onclick="removePlayer()">Remove Player</button>
+<button onclick="updatePlayer()">Update Tiers</button>
+<button onclick="togglePanel()">Close</button>
+</div>
+
 <script>
 
 const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
-
 let currentMode = "overall";
 
 let players = [
 {name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
-{name:"SkyPvP",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]},
-{name:"Coldified",tiers:["LT1","LT1","LT1","HT2","HT2","LT3","HT1","LT2"]},
-{name:"Swight",tiers:["HT1","HT1","LT2","LT2","HT3","HT3","HT1","LT2"]}
+{name:"SkyPvP",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]}
 ];
 
 const list = document.getElementById("list");
@@ -194,14 +247,12 @@ const search = document.querySelector(".search");
 
 /* RENDER */
 function render(filter=""){
-
 list.innerHTML="";
 
 let filtered = players.filter(p =>
 p.name.toLowerCase().includes(filter.toLowerCase())
 );
 
-/* SORT IF MODE SELECTED */
 if(currentMode !== "overall"){
 filtered.sort((a,b)=>{
 return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
@@ -210,27 +261,16 @@ return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
 
 filtered.forEach((p,i)=>{
 
-let content = "";
-
-/* SHOW ALL MODES */
-if(currentMode === "overall"){
-content = modes.map((icon,index)=>`
+let content = currentMode === "overall"
+? modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier">${p.tiers[index]}</div>
-</div>
-`).join("");
-}
-
-/* SHOW ONE MODE */
-else{
-content = `
-<div class="mode">
+</div>`).join("")
+: `<div class="mode">
 <div class="icon">${modes[currentMode]}</div>
 <div class="tier">${p.tiers[currentMode]}</div>
-</div>
-`;
-}
+</div>`;
 
 let row = document.createElement("div");
 row.className="row";
@@ -238,39 +278,28 @@ row.className="row";
 row.innerHTML=`
 <div class="left">
 <div class="rank">${i+1}.</div>
-
 <div class="player">
 <img src="https://mc-heads.net/avatar/${p.name}" width="46">
 <div class="name">${p.name}</div>
 </div>
 </div>
 
-<div style="display:flex;align-items:center;">
 <div class="modes">${content}</div>
-
-<div class="discord" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">
-Discord
-</div>
-</div>
 `;
 
 list.appendChild(row);
 
 });
-
 }
 
 render();
 
 /* SEARCH */
-search.addEventListener("input", e=>{
-render(e.target.value);
-});
+search.addEventListener("input", e=> render(e.target.value));
 
-/* TAB SWITCH */
+/* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
-tab.addEventListener("click", ()=>{
-
+tab.onclick=()=>{
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 tab.classList.add("active");
 
@@ -279,9 +308,38 @@ currentMode = tab.dataset.mode === "overall"
 : Number(tab.dataset.mode);
 
 render(search.value);
+};
+});
 
-});
-});
+/* ADMIN PANEL */
+function togglePanel(){
+const p = document.getElementById("panel");
+p.style.display = p.style.display === "flex" ? "none" : "flex";
+}
+
+function addPlayer(){
+let name = document.getElementById("name").value;
+let tiers = document.getElementById("tiers").value.split(",");
+
+players.push({name,tiers});
+render();
+}
+
+function removePlayer(){
+let name = document.getElementById("name").value;
+players = players.filter(p=>p.name !== name);
+render();
+}
+
+function updatePlayer(){
+let name = document.getElementById("name").value;
+let tiers = document.getElementById("tiers").value.split(",");
+
+let p = players.find(p=>p.name === name);
+if(p) p.tiers = tiers;
+
+render();
+}
 
 </script>
 
