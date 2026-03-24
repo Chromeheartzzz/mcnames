@@ -1,0 +1,35 @@
+/* NAME HOVER EFFECT */
+.name{
+font-size:22px;
+font-weight:bold;
+transition:all 0.2s ease;
+cursor:pointer;
+}
+
+.name:hover{
+transform:scale(1.15);
+color:#e5e7eb;
+}
+
+/* DISCORD BUTTON */
+.discord-btn{
+background:#1e293b;
+border:1px solid #334155;
+padding:6px 10px;
+border-radius:8px;
+font-size:12px;
+cursor:pointer;
+transition:.2s;
+}
+
+.discord-btn:hover{
+background:#5865F2;
+color:white;
+}
+
+/* RIGHT SIDE ALIGN */
+.right{
+display:flex;
+align-items:center;
+gap:20px;
+}
