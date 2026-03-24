@@ -14,7 +14,6 @@ background:linear-gradient(#0b1220,#020617);
 color:white;
 }
 
-/* HEADER */
 header{
 font-size:48px;
 text-align:center;
@@ -23,6 +22,27 @@ font-weight:bold;
 background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+}
+
+/* ADMIN BAR */
+.topbar{
+display:flex;
+justify-content:flex-end;
+padding:10px 20px;
+}
+
+.admin{
+display:none;
+}
+
+.admin button{
+margin-left:5px;
+padding:6px 10px;
+border:none;
+border-radius:6px;
+background:#2563eb;
+color:white;
+cursor:pointer;
 }
 
 /* TABLE */
@@ -35,22 +55,21 @@ padding:10px;
 table{
 width:100%;
 border-collapse:collapse;
-overflow:hidden;
 border-radius:10px;
+overflow:hidden;
 }
 
 th{
 background:#1e293b;
 padding:12px;
 text-align:left;
-font-size:14px;
 }
 
 td{
 padding:14px;
 }
 
-/* ROW STYLE LIKE IMAGE */
+/* ROW STYLE */
 tbody tr{
 background:linear-gradient(90deg,#1e3a8a,#1d4ed8);
 }
@@ -63,14 +82,9 @@ tr:hover{
 filter:brightness(1.1);
 }
 
-/* PLAYER HEAD */
-img{
-border-radius:6px;
-}
-
 /* NAME FIX */
 .name{
-padding-left:20px; /* 👈 slight right shift like image */
+padding-left:22px; /* 👈 small move right */
 font-size:20px;
 font-weight:600;
 
@@ -79,7 +93,7 @@ background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
 -webkit-text-fill-color:transparent;
 }
 
-/* ICON + TIER */
+/* ICONS */
 .mode-cell{
 display:flex;
 justify-content:center;
@@ -93,7 +107,6 @@ align-items:center;
 gap:3px;
 }
 
-/* ICON STYLE */
 .mode-icon{
 width:36px;
 height:36px;
@@ -102,7 +115,6 @@ align-items:center;
 justify-content:center;
 border-radius:10px;
 background:#111827;
-font-size:16px;
 }
 
 /* TIER TEXT */
@@ -115,12 +127,34 @@ background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
 -webkit-text-fill-color:transparent;
 }
 
+/* DRAG */
+.dragging{
+opacity:0.5;
+}
+
+.selected{
+outline:2px solid #2563eb;
+}
+
+img{
+border-radius:6px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>ChromeTiers</header>
+
+<div class="topbar">
+<div class="admin" id="adminPanel">
+<button onclick="editSelected()">Edit Tier</button>
+<button onclick="removeSelected()">Remove</button>
+</div>
+
+<button onclick="unlockAdmin()">Admin</button>
+</div>
 
 <div class="container">
 
@@ -141,6 +175,10 @@ background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
 </div>
 
 <script>
+
+const ADMIN_PASSWORD = "Chromepassword";
+let isAdmin = false;
+let selectedPlayer = null;
 
 const modes = [
 {key:"crystal",icon:"🔮"},
@@ -166,11 +204,47 @@ tiers:{crystal:"HT2",smp:"LT1",axe:"HT2",sword:"HT1",mace:"LT1",uhc:"HT2",netpot
 
 const body = document.getElementById("leaderboardBody");
 
+// ADMIN LOGIN
+function unlockAdmin(){
+let pass = prompt("Enter admin password");
+if(pass === ADMIN_PASSWORD){
+isAdmin = true;
+document.getElementById("adminPanel").style.display="block";
+render();
+alert("Admin unlocked");
+}
+}
+
+// RENDER
 function render(){
 
 body.innerHTML="";
 
-players.forEach(p=>{
+players.forEach((p,index)=>{
+
+let row=document.createElement("tr");
+
+row.onclick=()=>selectPlayer(p,row);
+
+/* DRAG ONLY IF ADMIN */
+if(isAdmin){
+row.draggable=true;
+
+row.ondragstart=()=>row.classList.add("dragging");
+
+row.ondragend=()=>{
+row.classList.remove("dragging");
+updateOrder();
+};
+
+row.ondragover=(e)=>{
+e.preventDefault();
+const dragging=document.querySelector(".dragging");
+if(dragging && dragging!==row){
+body.insertBefore(dragging,row);
+}
+};
+}
 
 let modesHTML = modes.map(m=>`
 <div class="mode-box">
@@ -178,8 +252,6 @@ let modesHTML = modes.map(m=>`
 <div class="tier-text">${p.tiers[m.key]}</div>
 </div>
 `).join("");
-
-let row=document.createElement("tr");
 
 row.innerHTML=`
 <td><img src="https://mc-heads.net/avatar/${p.name}" width="34"></td>
@@ -191,6 +263,46 @@ body.appendChild(row);
 
 });
 
+}
+
+// UPDATE ORDER
+function updateOrder(){
+let newOrder=[];
+document.querySelectorAll("#leaderboardBody tr").forEach(row=>{
+let name=row.children[1].textContent;
+let player=players.find(p=>p.name===name);
+if(player)newOrder.push(player);
+});
+players=newOrder;
+}
+
+// SELECT
+function selectPlayer(player,row){
+selectedPlayer=player;
+document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
+row.classList.add("selected");
+}
+
+// EDIT
+function editSelected(){
+if(!isAdmin || !selectedPlayer) return;
+
+let mode=prompt("Gamemode");
+let tier=prompt("Tier");
+
+if(!mode||!tier)return;
+
+selectedPlayer.tiers[mode]=tier;
+render();
+}
+
+// REMOVE
+function removeSelected(){
+if(!isAdmin || !selectedPlayer) return;
+
+players=players.filter(p=>p!==selectedPlayer);
+selectedPlayer=null;
+render();
 }
 
 render();
