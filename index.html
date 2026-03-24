@@ -62,9 +62,12 @@ padding:12px;
 text-align:center;
 }
 
+/* ✅ FIXED NAME COLUMN */
 .name{
 text-align:left;
-padding-left:20px; /* 👈 moved right slightly */
+padding-left:50px; /* pushes name to the RIGHT */
+font-size:20px;    /* bigger text */
+font-weight:600;
 }
 
 tr:nth-child(even){
@@ -171,7 +174,7 @@ const modes = [
 {key:"sword",icon:"⚔"},
 {key:"mace",icon:"🔨"},
 {key:"uhc",icon:"❤️"},
-{key:"netpot",icon:"🧪"},
+{key:"netpot",icon:"♟️"},
 {key:"diapot",icon:"💎"}
 ];
 
@@ -245,9 +248,8 @@ body.appendChild(row);
 
 }
 
-// update order after drag
+// update order
 function updateOrder(){
-
 let newOrder = [];
 document.querySelectorAll("#leaderboardBody tr").forEach(row=>{
 let name = row.children[1].textContent;
@@ -255,7 +257,6 @@ let player = players.find(p=>p.name===name);
 if(player) newOrder.push(player);
 });
 players = newOrder;
-
 }
 
 // select
@@ -267,8 +268,7 @@ row.classList.add("selected");
 
 // edit
 function editSelected(){
-if(!isAdmin) return;
-if(!selectedPlayer) return;
+if(!isAdmin || !selectedPlayer) return;
 
 let mode = prompt("Gamemode");
 let tier = prompt("Tier");
@@ -281,8 +281,7 @@ render();
 
 // remove
 function removeSelected(){
-if(!isAdmin) return;
-if(!selectedPlayer) return;
+if(!isAdmin || !selectedPlayer) return;
 
 players = players.filter(p=>p!==selectedPlayer);
 selectedPlayer=null;
