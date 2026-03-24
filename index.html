@@ -7,76 +7,122 @@
 
 <style>
 
-/* Base */
 body{
 margin:0;
 font-family:Arial;
-background:#020617;
+background:#0b1220;
 color:white;
 }
 
-/* Layout section (like Tailwind bg card) */
-.section{
+/* NAVBAR */
+.nav{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:12px 20px;
+background:#0f172a;
+border-bottom:1px solid #1e293b;
+}
+
+.logo{
+font-weight:bold;
+font-size:20px;
+color:#facc15;
+}
+
+.nav-links{
+display:flex;
+gap:20px;
+align-items:center;
+}
+
+.nav-links span{
+opacity:.7;
+cursor:pointer;
+}
+
+.search{
+background:#020617;
+border:1px solid #1e293b;
+padding:6px 10px;
+border-radius:8px;
+color:white;
+}
+
+/* TABS */
+.tabs{
+display:flex;
+gap:10px;
+padding:15px;
+}
+
+.tab{
+padding:10px 15px;
+border-radius:10px;
+background:#020617;
+border:1px solid #1e293b;
+cursor:pointer;
+}
+
+.tab.active{
+background:#1d4ed8;
+}
+
+/* LIST */
+.container{
 max-width:1100px;
 margin:auto;
-padding:20px;
 }
 
-/* Card */
-.card{
-background:#0f172a;
-border:1px solid #1e293b;
-border-radius:12px;
-padding:20px;
-}
-
-/* Header */
-.header{
-text-align:center;
-font-size:40px;
-font-weight:bold;
-margin-bottom:20px;
-
-background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-/* Row container */
 .row{
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:12px;
-border-radius:10px;
-margin-bottom:10px;
-background:linear-gradient(90deg,#1e3a8a,#1d4ed8);
+padding:14px;
+margin:8px 0;
+background:#0f172a;
+border-radius:12px;
+border:1px solid #1e293b;
 }
 
-/* Left (player) */
+/* LEFT SIDE */
+.left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.rank{
+font-size:22px;
+font-weight:bold;
+color:#facc15;
+}
+
 .player{
 display:flex;
 align-items:center;
-gap:12px;
+gap:10px;
 }
 
-/* Name */
 .name{
 font-size:18px;
-font-weight:600;
-
-background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+font-weight:bold;
 }
 
-/* Modes */
+/* REGION */
+.region{
+background:#111827;
+padding:4px 8px;
+border-radius:6px;
+font-size:12px;
+}
+
+/* MODES */
 .modes{
 display:flex;
 gap:10px;
 }
 
-/* Mode box */
 .mode{
 display:flex;
 flex-direction:column;
@@ -85,20 +131,18 @@ font-size:12px;
 }
 
 .icon{
-width:32px;
-height:32px;
+width:30px;
+height:30px;
 display:flex;
 align-items:center;
 justify-content:center;
 border-radius:8px;
-background:#111827;
+background:#020617;
 }
 
 .tier{
 font-weight:bold;
-background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+color:#facc15;
 }
 
 img{
@@ -110,50 +154,63 @@ border-radius:6px;
 
 <body>
 
-<div class="section">
+<!-- NAV -->
+<div class="nav">
 
-<div class="header">ChromeTiers</div>
+<div class="logo">ChromeTiers</div>
 
-<div class="card" id="list"></div>
+<div class="nav-links">
+<span>Home</span>
+<span style="opacity:1;">🏆 Rankings</span>
+<span>🎮 Discords</span>
+<span style="color:#60a5fa;">Admin Panel</span>
+</div>
+
+<input class="search" placeholder="Search player...">
 
 </div>
+
+<!-- TABS -->
+<div class="tabs">
+<div class="tab active">🏆 Overall</div>
+<div class="tab">⚔ LTMs</div>
+<div class="tab">𖢻 Vanilla</div>
+<div class="tab">❤️ UHC</div>
+<div class="tab">💎 Pot</div>
+<div class="tab">💀 NethOP</div>
+<div class="tab">🛡️ SMP</div>
+<div class="tab">🗡 Sword</div>
+<div class="tab">🪓 Axe</div>
+<div class="tab">🔨 Mace</div>
+</div>
+
+<div class="container" id="list"></div>
 
 <script>
 
 const modes = [
-{key:"crystal",icon:"🔮"},
-{key:"smp",icon:"🛡️"},
-{key:"axe",icon:"🪓"},
-{key:"sword",icon:"🗡"},
-{key:"mace",icon:"🔨"},
-{key:"uhc",icon:"❤️"},
-{key:"netpot",icon:"♟️"},
-{key:"diapot",icon:"💎"}
+"🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"
 ];
 
 let players = [
-{
-name:"ChromeKing",
-tiers:{crystal:"HT1",smp:"HT1",axe:"LT1",sword:"HT1",mace:"HT1",uhc:"HT1",netpot:"LT1",diapot:"LT1"}
-},
-{
-name:"SkyPvP",
-tiers:{crystal:"HT2",smp:"LT1",axe:"HT2",sword:"HT1",mace:"LT1",uhc:"HT2",netpot:"HT1",diapot:"LT1"}
-}
+{name:"ChromeKing",region:"NA",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
+{name:"SkyPvP",region:"NA",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]},
+{name:"Coldified",region:"EU",tiers:["LT1","LT1","LT1","HT2","HT2","LT3","HT1","LT2"]},
+{name:"Swight",region:"NA",tiers:["HT1","HT1","LT2","LT2","HT3","HT3","HT1","LT2"]}
 ];
 
-const container = document.getElementById("list");
+const list = document.getElementById("list");
 
 function render(){
 
-container.innerHTML="";
+list.innerHTML="";
 
-players.forEach(p=>{
+players.forEach((p,i)=>{
 
-let modesHTML = modes.map(m=>`
+let modesHTML = modes.map((icon,index)=>`
 <div class="mode">
-<div class="icon">${m.icon}</div>
-<div class="tier">${p.tiers[m.key]}</div>
+<div class="icon">${icon}</div>
+<div class="tier">${p.tiers[index]}</div>
 </div>
 `).join("");
 
@@ -162,15 +219,21 @@ let row = document.createElement("div");
 row.className="row";
 
 row.innerHTML=`
+<div class="left">
+<div class="rank">${i+1}.</div>
+
 <div class="player">
-<img src="https://mc-heads.net/avatar/${p.name}" width="32">
+<img src="https://mc-heads.net/avatar/${p.name}" width="36">
 <div class="name">${p.name}</div>
 </div>
+</div>
+
+<div class="region">${p.region}</div>
 
 <div class="modes">${modesHTML}</div>
 `;
 
-container.appendChild(row);
+list.appendChild(row);
 
 });
 
