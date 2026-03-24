@@ -55,19 +55,32 @@ border-collapse:collapse;
 th{
 background:#111827;
 padding:10px;
+text-align:left;
 }
 
 td{
 padding:12px;
-text-align:center;
+text-align:left;
 }
 
-/* ✅ FIXED NAME COLUMN */
+/* NAME + TIER STYLE (same look) */
 .name{
-text-align:left;
-padding-left:50px; /* pushes name to the RIGHT */
-font-size:20px;    /* bigger text */
+padding-left:15px;
+font-size:20px;
 font-weight:600;
+
+background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.tier-text{
+font-size:18px;
+font-weight:600;
+
+background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 tr:nth-child(even){
@@ -86,14 +99,13 @@ outline:2px solid #2563eb;
 .mode-cell{
 display:flex;
 gap:12px;
-justify-content:center;
 flex-wrap:wrap;
 }
 
 .mode-box{
 display:flex;
 flex-direction:column;
-align-items:center;
+align-items:flex-start;
 font-size:12px;
 }
 
@@ -107,21 +119,13 @@ border-radius:10px;
 background:#111827;
 }
 
-/* chrome text */
-.chrome{
-background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-font-weight:bold;
+/* drag */
+.dragging{
+opacity:0.5;
 }
 
 img{
 border-radius:6px;
-}
-
-/* drag */
-.dragging{
-opacity:0.5;
 }
 
 </style>
@@ -164,14 +168,14 @@ opacity:0.5;
 
 const ADMIN_PASSWORD = "Chromepassword";
 let isAdmin = false;
-
 let selectedPlayer = null;
 
+/* UPDATED ICONS */
 const modes = [
 {key:"crystal",icon:"🔮"},
 {key:"smp",icon:"🛡️"},
 {key:"axe",icon:"🪓"},
-{key:"sword",icon:"⚔"},
+{key:"sword",icon:"🗡"},
 {key:"mace",icon:"🔨"},
 {key:"uhc",icon:"❤️"},
 {key:"netpot",icon:"♟️"},
@@ -206,7 +210,7 @@ function render(){
 
 body.innerHTML="";
 
-players.forEach((p,index)=>{
+players.forEach(p=>{
 
 let row=document.createElement("tr");
 
@@ -232,7 +236,7 @@ row.onclick=()=>selectPlayer(p,row);
 let modesHTML = modes.map(m=>`
 <div class="mode-box">
 <div class="mode-icon">${m.icon}</div>
-<div class="chrome">${p.tiers[m.key] || "-"}</div>
+<div class="tier-text">${p.tiers[m.key] || "-"}</div>
 </div>
 `).join("");
 
@@ -285,7 +289,6 @@ if(!isAdmin || !selectedPlayer) return;
 
 players = players.filter(p=>p!==selectedPlayer);
 selectedPlayer=null;
-
 render();
 }
 
