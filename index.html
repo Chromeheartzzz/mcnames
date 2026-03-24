@@ -19,21 +19,24 @@ color:white;
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:12px 20px;
+padding:16px 30px;
 background:#0f172a;
 border-bottom:1px solid #1e293b;
 }
 
 .logo{
 font-weight:bold;
-font-size:20px;
-color:#facc15;
+font-size:26px;
+background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .nav-links{
 display:flex;
-gap:20px;
+gap:25px;
 align-items:center;
+font-size:16px;
 }
 
 .nav-links span{
@@ -44,33 +47,35 @@ cursor:pointer;
 .search{
 background:#020617;
 border:1px solid #1e293b;
-padding:6px 10px;
-border-radius:8px;
+padding:10px 14px;
+border-radius:10px;
 color:white;
+font-size:14px;
 }
 
 /* TABS */
 .tabs{
 display:flex;
-gap:10px;
-padding:15px;
+gap:12px;
+padding:20px;
 }
 
 .tab{
-padding:10px 15px;
-border-radius:10px;
+padding:12px 18px;
+border-radius:12px;
 background:#020617;
 border:1px solid #1e293b;
 cursor:pointer;
+font-size:14px;
 }
 
 .tab.active{
-background:#1d4ed8;
+background:#1e293b;
 }
 
 /* LIST */
 .container{
-max-width:1100px;
+max-width:1300px;
 margin:auto;
 }
 
@@ -78,10 +83,10 @@ margin:auto;
 display:flex;
 align-items:center;
 justify-content:space-between;
-padding:14px;
-margin:8px 0;
+padding:20px;
+margin:12px 0;
 background:#0f172a;
-border-radius:12px;
+border-radius:16px;
 border:1px solid #1e293b;
 }
 
@@ -89,64 +94,61 @@ border:1px solid #1e293b;
 .left{
 display:flex;
 align-items:center;
-gap:15px;
+gap:20px;
 }
 
 .rank{
-font-size:22px;
+font-size:28px;
 font-weight:bold;
-color:#facc15;
+background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .player{
 display:flex;
 align-items:center;
-gap:10px;
+gap:12px;
 }
 
 .name{
-font-size:18px;
+font-size:22px;
 font-weight:bold;
-}
-
-/* REGION */
-.region{
-background:#111827;
-padding:4px 8px;
-border-radius:6px;
-font-size:12px;
 }
 
 /* MODES */
 .modes{
 display:flex;
-gap:10px;
+gap:14px;
 }
 
 .mode{
 display:flex;
 flex-direction:column;
 align-items:center;
-font-size:12px;
+font-size:14px;
 }
 
 .icon{
-width:30px;
-height:30px;
+width:40px;
+height:40px;
 display:flex;
 align-items:center;
 justify-content:center;
-border-radius:8px;
+border-radius:10px;
 background:#020617;
+font-size:18px;
 }
 
 .tier{
 font-weight:bold;
-color:#facc15;
+background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 img{
-border-radius:6px;
+border-radius:8px;
 }
 
 </style>
@@ -174,11 +176,11 @@ border-radius:6px;
 <div class="tabs">
 <div class="tab active">🏆 Overall</div>
 <div class="tab">⚔ LTMs</div>
-<div class="tab">𖢻 Vanilla</div>
+<div class="tab">🛡 Vanilla</div>
 <div class="tab">❤️ UHC</div>
-<div class="tab">💎 Pot</div>
+<div class="tab">🧪 Pot</div>
 <div class="tab">💀 NethOP</div>
-<div class="tab">🛡️ SMP</div>
+<div class="tab">🌐 SMP</div>
 <div class="tab">🗡 Sword</div>
 <div class="tab">🪓 Axe</div>
 <div class="tab">🔨 Mace</div>
@@ -193,10 +195,10 @@ const modes = [
 ];
 
 let players = [
-{name:"ChromeKing",region:"NA",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
-{name:"SkyPvP",region:"NA",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]},
-{name:"Coldified",region:"EU",tiers:["LT1","LT1","LT1","HT2","HT2","LT3","HT1","LT2"]},
-{name:"Swight",region:"NA",tiers:["HT1","HT1","LT2","LT2","HT3","HT3","HT1","LT2"]}
+{name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
+{name:"SkyPvP",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]},
+{name:"Coldified",tiers:["LT1","LT1","LT1","HT2","HT2","LT3","HT1","LT2"]},
+{name:"Swight",tiers:["HT1","HT1","LT2","LT2","HT3","HT3","HT1","LT2"]}
 ];
 
 const list = document.getElementById("list");
@@ -223,12 +225,10 @@ row.innerHTML=`
 <div class="rank">${i+1}.</div>
 
 <div class="player">
-<img src="https://mc-heads.net/avatar/${p.name}" width="36">
+<img src="https://mc-heads.net/avatar/${p.name}" width="48">
 <div class="name">${p.name}</div>
 </div>
 </div>
-
-<div class="region">${p.region}</div>
 
 <div class="modes">${modesHTML}</div>
 `;
