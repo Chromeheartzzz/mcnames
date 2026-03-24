@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>chrometiers.mc V3</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#030712;color:white}
+header{text-align:center;font-size:40px;padding:20px;font-weight:bold;background:linear-gradient(90deg,#00eaff,#0044ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.container{max-width:1100px;margin:auto}
+input{width:100%;padding:10px;border-radius:8px;border:none;margin:6px 0}
+table{width:100%;border-collapse:collapse;background:#111827}
+th{background:#2563eb;padding:10px}
+td{padding:8px;text-align:center}
+tr:nth-child(even){background:#1f2937}
+button{padding:8px;border:none;border-radius:6px;background:#2563eb;color:white;margin:4px}
+.admin{background:#020617;padding:10px;margin-top:10px}
+.tier-HT1{color:red;font-weight:bold}
+.tier-HT2{color:orange}
+.tier-LT1{color:cyan}
+.tier-LT2{color:lime}
+img.skin{width:24px;height:24px}
+</style>
+</head>
+<body>
+<header>chrometiers.mc</header>
+<div class="container">
+<input id="search" placeholder="Search" onkeyup="searchPlayer()">
+<table id="board"></table>
+<div class="admin">
+<h3>Admin Panel</h3>
+<input id="name" placeholder="Name">
+<input id="tier" placeholder="Tier">
+<input id="points" placeholder="Points">
+<button onclick="addPlayer()">Add</button>
+</div>
+</div>
+<script>
+let players=[
+{name:"Chromeheartz",tier:"HT1",points:2500},
+{name:"Pvper",tier:"HT2",points:2100},
+{name:"SwordMain",tier:"LT1",points:1500}
+]
+function skin(name){return `https://mc-heads.net/avatar/${name}`}
+function render(){
+let table=document.getElementById("board")
+players.sort((a,b)=>b.points-a.points)
+let html=`<tr><th>#</th><th>Skin</th><th>Name</th><th>Tier</th><th>Points</th></tr>`
+players.forEach((p,i)=>{
+html+=`<tr>
+<td>${i+1}</td>
+<td><img class='skin' src='${skin(p.name)}'></td>
+<td>${p.name}</td>
+<td class='tier-${p.tier}'>${p.tier}</td>
+<td>${p.points}</td>
+</tr>`
+})
+table.innerHTML=html
+}
+function addPlayer(){
+let n=name.value
+let t=tier.value
+let p=Number(points.value)
+players.push({name:n,tier:t,points:p})
+render()
+}
+function searchPlayer(){
+let s=search.value.toLowerCase()
+let rows=document.querySelectorAll("#board tr")
+for(let i=1;i<rows.length;i++){
+let name=rows[i].children[2].textContent.toLowerCase()
+rows[i].style.display=name.includes(s)?"":"none"
+}
+}
+render()
+</script>
+</body>
+</html>
