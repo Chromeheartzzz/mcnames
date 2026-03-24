@@ -168,42 +168,6 @@ border-radius:8px;
 .tier.LT4{color:#655B79;}
 .tier.LT5{color:#655B79;}
 
-/* ADMIN PANEL */
-.panel{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#020617;
-padding:20px;
-border-radius:12px;
-border:1px solid #1e293b;
-display:none;
-flex-direction:column;
-gap:10px;
-z-index:1000;
-}
-
-.panel input{
-padding:8px;
-background:#0f172a;
-border:1px solid #1e293b;
-color:white;
-border-radius:6px;
-}
-
-.panel button{
-padding:8px;
-background:#1e293b;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-
-.panel button:hover{
-background:#5865F2;
-}
-
 </style>
 </head>
 
@@ -215,7 +179,7 @@ background:#5865F2;
 
 <div class="nav-center">
 <div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
-<div class="top-btn" onclick="togglePanel()">Admin Panel</div>
+<div class="top-btn">Admin Panel</div>
 </div>
 
 <div class="nav-right">
@@ -240,10 +204,18 @@ background:#5865F2;
 
 <script>
 
-/* 🔥 TIER RANKING SYSTEM */
+/* 🔥 CORRECT ORDER (LOW → HIGH) */
 const tierRank = {
-HT1:10, HT2:9, HT3:8, HT4:7, HT5:6,
-LT1:5, LT2:4, LT3:3, LT4:2, LT5:1
+LT5:1,
+HT5:2,
+LT4:3,
+HT4:4,
+LT3:5,
+HT3:6,
+LT2:7,
+HT2:8,
+LT1:9,
+HT1:10
 };
 
 const modes = ["🔮","🗡","🪓","🛡️","❤️","🔨","♟️","💎"];
@@ -264,7 +236,7 @@ let filtered = players.filter(p =>
 p.name.toLowerCase().includes(filter.toLowerCase())
 );
 
-/* 🔥 SORT CORRECTLY */
+/* 🔥 SORT USING YOUR ORDER */
 if(currentMode !== "overall"){
 filtered.sort((a,b)=>{
 return tierRank[b.tiers[currentMode]] - tierRank[a.tiers[currentMode]];
@@ -330,11 +302,6 @@ currentMode = tab.dataset.mode === "overall"
 render(search.value);
 };
 });
-
-/* ADMIN */
-function togglePanel(){
-alert("Admin panel still enabled in your version");
-}
 
 </script>
 
