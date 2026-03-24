@@ -24,7 +24,6 @@ border-bottom:1px solid #1e293b;
 position:relative;
 }
 
-/* LEFT LOGO */
 .logo{
 font-size:24px;
 font-weight:bold;
@@ -33,17 +32,14 @@ background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
 -webkit-text-fill-color:transparent;
 }
 
-/* 🔥 CENTER BUTTONS */
 .nav-center{
 position:absolute;
 left:50%;
 transform:translateX(-50%);
 display:flex;
 gap:15px;
-align-items:center;
 }
 
-/* RIGHT SEARCH */
 .nav-right{
 margin-left:auto;
 }
@@ -73,7 +69,6 @@ display:flex;
 justify-content:center;
 gap:10px;
 padding:15px;
-flex-wrap:wrap;
 }
 
 .tab{
@@ -104,11 +99,11 @@ border-radius:14px;
 border:1px solid #1e293b;
 }
 
+/* LEFT SIDE */
 .left{
 display:flex;
 align-items:center;
 gap:15px;
-min-width:200px;
 }
 
 .rank{
@@ -135,14 +130,14 @@ transition:.2s;
 transform:scale(1.15);
 }
 
+/* 🔥 RIGHT ALIGN FIX */
 .modes{
 display:flex;
-justify-content:center;
-align-items:center;
 gap:12px;
-flex:1;
+margin-left:auto; /* pushes to right */
 }
 
+/* ICONS */
 .mode{
 display:flex;
 flex-direction:column;
@@ -209,33 +204,29 @@ background:#5865F2;
 
 <!-- NAV -->
 <div class="nav">
-
 <div class="logo">ChromeTiers</div>
 
-<!-- CENTER -->
 <div class="nav-center">
 <div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
 <div class="top-btn" onclick="togglePanel()">Admin Panel</div>
 </div>
 
-<!-- RIGHT -->
 <div class="nav-right">
 <input class="search" placeholder="Search...">
 </div>
-
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-<div class="tab active" data-mode="overall">🏆 Overall</div>
-<div class="tab" data-mode="0">🔮</div>
-<div class="tab" data-mode="1">🗡</div>
-<div class="tab" data-mode="2">🪓</div>
-<div class="tab" data-mode="3">🛡️</div>
-<div class="tab" data-mode="4">❤️</div>
-<div class="tab" data-mode="5">🧪</div>
-<div class="tab" data-mode="6">♟️</div>
-<div class="tab" data-mode="7">💎</div>
+<div class="tab active">🏆 Overall</div>
+<div class="tab">🔮</div>
+<div class="tab">🗡</div>
+<div class="tab">🪓</div>
+<div class="tab">🛡️</div>
+<div class="tab">❤️</div>
+<div class="tab">🧪</div>
+<div class="tab">♟️</div>
+<div class="tab">💎</div>
 </div>
 
 <div class="container" id="list"></div>
