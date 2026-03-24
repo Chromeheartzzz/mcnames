@@ -31,39 +31,10 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 padding:10px 20px;
-background:#020617;
 border-bottom:1px solid #111827;
 }
 
-/* GAMEMODES */
-.modes{
-display:flex;
-gap:10px;
-}
-
-.mode{
-width:40px;
-height:40px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:10px;
-background:#111827;
-cursor:pointer;
-transition:0.2s;
-font-size:18px;
-}
-
-.mode.active{
-background:#2563eb;
-}
-
-/* ADMIN PANEL */
-.admin{
-display:flex;
-gap:10px;
-}
-
+/* ADMIN */
 .admin button{
 padding:6px 10px;
 border:none;
@@ -71,11 +42,12 @@ border-radius:6px;
 background:#2563eb;
 color:white;
 cursor:pointer;
+margin-left:5px;
 }
 
 /* TABLE */
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
 padding:10px;
 }
@@ -91,7 +63,7 @@ padding:10px;
 }
 
 td{
-padding:10px;
+padding:12px;
 text-align:center;
 }
 
@@ -108,7 +80,40 @@ cursor:pointer;
 outline:2px solid #2563eb;
 }
 
-/* SKIN */
+/* ICON + TIER STACK */
+.mode-cell{
+display:flex;
+gap:12px;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+.mode-box{
+display:flex;
+flex-direction:column;
+align-items:center;
+font-size:12px;
+}
+
+.mode-icon{
+width:36px;
+height:36px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+background:#111827;
+font-size:16px;
+}
+
+/* CHROME TEXT */
+.chrome{
+background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+font-weight:bold;
+}
+
 img{
 border-radius:6px;
 }
@@ -122,21 +127,8 @@ border-radius:6px;
 
 <div class="topbar">
 
-<!-- GAMEMODE ICONS -->
-<div class="modes">
+<div></div>
 
-<div class="mode active" onclick="setMode('crystal',this)">💎</div>
-<div class="mode" onclick="setMode('smp',this)">🛡️</div>
-<div class="mode" onclick="setMode('axe',this)">🪓</div>
-<div class="mode" onclick="setMode('sword',this)">🗡</div>
-<div class="mode" onclick="setMode('mace',this)">🔨</div>
-<div class="mode" onclick="setMode('uhc',this)">❤️</div>
-<div class="mode" onclick="setMode('netpot',this)">♟️</div>
-<div class="mode" onclick="setMode('diapot',this)">💎</div>
-
-</div>
-
-<!-- ADMIN BUTTONS -->
 <div class="admin">
 <button onclick="editSelected()">Edit Tier</button>
 <button onclick="removeSelected()">Remove</button>
@@ -152,7 +144,7 @@ border-radius:6px;
 <tr>
 <th>Player</th>
 <th>Name</th>
-<th>Tier</th>
+<th>Gamemode Tiers</th>
 </tr>
 </thead>
 
@@ -167,17 +159,27 @@ border-radius:6px;
 // PASSWORD
 const ADMIN_PASSWORD = "Chromepassword";
 
-let currentMode = "crystal";
 let selectedPlayer = null;
+
+const modes = [
+{key:"crystal",icon:"💎"},
+{key:"smp",icon:"🛡"},
+{key:"axe",icon:"🪓"},
+{key:"sword",icon:"⚔"},
+{key:"mace",icon:"🔨"},
+{key:"uhc",icon:"❤️"},
+{key:"netpot",icon:"🧪"},
+{key:"diapot",icon:"💠"}
+];
 
 let players = [
 {
 name:"ChromeKing",
-tiers:{crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""}
+tiers:{crystal:"HT1",smp:"HT1",axe:"LT1",sword:"HT1",mace:"HT1",uhc:"HT1",netpot:"LT1",diapot:"LT1"}
 },
 {
 name:"SkyPvP",
-tiers:{crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""}
+tiers:{crystal:"HT2",smp:"LT1",axe:"HT2",sword:"HT1",mace:"LT1",uhc:"HT2",netpot:"HT1",diapot:"LT1"}
 }
 ];
 
@@ -194,10 +196,17 @@ let row=document.createElement("tr");
 
 row.onclick=()=>selectPlayer(p,row);
 
+let modesHTML = modes.map(m=>`
+<div class="mode-box">
+<div class="mode-icon">${m.icon}</div>
+<div class="chrome">${p.tiers[m.key] || "-"}</div>
+</div>
+`).join("");
+
 row.innerHTML=`
-<td><img src="https://mc-heads.net/avatar/${p.name}" width="30"></td>
+<td><img src="https://mc-heads.net/avatar/${p.name}" width="32"></td>
 <td>${p.name}</td>
-<td>${p.tiers[currentMode] || "-"}</td>
+<td><div class="mode-cell">${modesHTML}</div></td>
 `;
 
 body.appendChild(row);
@@ -212,24 +221,11 @@ function selectPlayer(player,row){
 selectedPlayer = player;
 
 document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
-
 row.classList.add("selected");
 
 }
 
-// CHANGE MODE
-function setMode(mode,el){
-
-currentMode = mode;
-
-document.querySelectorAll(".mode").forEach(m=>m.classList.remove("active"));
-el.classList.add("active");
-
-render();
-
-}
-
-// EDIT SELECTED
+// EDIT
 function editSelected(){
 
 if(!selectedPlayer){
@@ -238,23 +234,23 @@ return;
 }
 
 let pass = prompt("Password");
-
 if(pass !== ADMIN_PASSWORD){
 alert("Wrong password");
 return;
 }
 
-let tier = prompt("Enter new tier");
+let mode = prompt("Gamemode (crystal, smp, axe, sword, mace, uhc, netpot, diapot)");
+let tier = prompt("New tier");
 
-if(!tier) return;
+if(!mode || !tier) return;
 
-selectedPlayer.tiers[currentMode] = tier;
+selectedPlayer.tiers[mode] = tier;
 
 render();
 
 }
 
-// REMOVE SELECTED
+// REMOVE
 function removeSelected(){
 
 if(!selectedPlayer){
@@ -263,14 +259,12 @@ return;
 }
 
 let pass = prompt("Password");
-
 if(pass !== ADMIN_PASSWORD){
 alert("Wrong password");
 return;
 }
 
 players = players.filter(p => p !== selectedPlayer);
-
 selectedPlayer = null;
 
 render();
