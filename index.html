@@ -14,23 +14,27 @@ background:linear-gradient(#0b1220,#020617);
 color:white;
 }
 
+/* HEADER BLENDS WITH BACKGROUND */
 header{
 font-size:48px;
 text-align:center;
 padding:20px;
 font-weight:bold;
+
 background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-/* ADMIN BAR */
+/* TOP BAR (NOW SAME COLOR AS BACKGROUND) */
 .topbar{
 display:flex;
 justify-content:flex-end;
 padding:10px 20px;
+background:transparent; /* 👈 removed box look */
 }
 
+/* ADMIN */
 .admin{
 display:none;
 }
@@ -82,9 +86,9 @@ tr:hover{
 filter:brightness(1.1);
 }
 
-/* NAME FIX */
+/* NAME */
 .name{
-padding-left:22px; /* 👈 small move right */
+padding-left:22px;
 font-size:20px;
 font-weight:600;
 
@@ -93,7 +97,7 @@ background:linear-gradient(90deg,#ffffff,#d1d5db,#ffffff);
 -webkit-text-fill-color:transparent;
 }
 
-/* ICONS */
+/* MODES */
 .mode-cell{
 display:flex;
 justify-content:center;
@@ -117,7 +121,7 @@ border-radius:10px;
 background:#111827;
 }
 
-/* TIER TEXT */
+/* TIER */
 .tier-text{
 font-size:14px;
 font-weight:700;
@@ -148,12 +152,15 @@ border-radius:6px;
 <header>ChromeTiers</header>
 
 <div class="topbar">
+
 <div class="admin" id="adminPanel">
+<button onclick="addPlayer()">Add Player</button>
 <button onclick="editSelected()">Edit Tier</button>
 <button onclick="removeSelected()">Remove</button>
 </div>
 
 <button onclick="unlockAdmin()">Admin</button>
+
 </div>
 
 <div class="container">
@@ -215,18 +222,40 @@ alert("Admin unlocked");
 }
 }
 
+// ADD PLAYER
+function addPlayer(){
+
+if(!isAdmin) return;
+
+let name = prompt("Enter player name");
+if(!name) return;
+
+let newPlayer = {
+name: name,
+tiers: {}
+};
+
+modes.forEach(m=>{
+newPlayer.tiers[m.key] = "";
+});
+
+players.push(newPlayer);
+
+render();
+
+}
+
 // RENDER
 function render(){
 
 body.innerHTML="";
 
-players.forEach((p,index)=>{
+players.forEach(p=>{
 
 let row=document.createElement("tr");
 
 row.onclick=()=>selectPlayer(p,row);
 
-/* DRAG ONLY IF ADMIN */
 if(isAdmin){
 row.draggable=true;
 
@@ -249,7 +278,7 @@ body.insertBefore(dragging,row);
 let modesHTML = modes.map(m=>`
 <div class="mode-box">
 <div class="mode-icon">${m.icon}</div>
-<div class="tier-text">${p.tiers[m.key]}</div>
+<div class="tier-text">${p.tiers[m.key] || "-"}</div>
 </div>
 `).join("");
 
@@ -265,7 +294,7 @@ body.appendChild(row);
 
 }
 
-// UPDATE ORDER
+// ORDER
 function updateOrder(){
 let newOrder=[];
 document.querySelectorAll("#leaderboardBody tr").forEach(row=>{
