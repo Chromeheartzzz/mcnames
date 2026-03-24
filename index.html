@@ -59,7 +59,7 @@ tr:nth-child(even){
 background:#0f172a;
 }
 
-input,select,button{
+input,button{
 padding:8px;
 margin:5px;
 border:none;
@@ -111,13 +111,19 @@ font-weight:bold;
 
 <div class="admin">
 
-<h3>Admin Panel (only you use this)</h3>
+<h3>Admin Panel</h3>
 
 <input id="playerName" placeholder="Player name">
 
-<input id="playerTier" placeholder="Tier (HT1, LT1, etc)">
+<input id="playerTier" placeholder="Tier">
+
+<input id="adminPass" placeholder="Password">
+
+<br>
 
 <button onclick="setTier()">Set Tier</button>
+
+<button onclick="removePlayer()">Remove Player</button>
 
 </div>
 
@@ -125,6 +131,11 @@ font-weight:bold;
 
 
 <script>
+
+
+// CHANGE THIS PASSWORD
+const ADMIN_PASSWORD = "chrome123";
+
 
 let players = [
 
@@ -136,7 +147,9 @@ let players = [
 
 ];
 
+
 const body = document.getElementById("leaderboardBody");
+
 
 function render(){
 
@@ -158,7 +171,29 @@ body.appendChild(row);
 
 }
 
+
+
+function checkPass(){
+
+let pass=document.getElementById("adminPass").value;
+
+if(pass !== ADMIN_PASSWORD){
+
+alert("Wrong password");
+
+return false;
+
+}
+
+return true;
+
+}
+
+
+
 function setTier(){
+
+if(!checkPass()) return;
 
 let name=document.getElementById("playerName").value;
 let tier=document.getElementById("playerTier").value;
@@ -176,6 +211,24 @@ p.tier=tier;
 render();
 
 }
+
+
+
+function removePlayer(){
+
+if(!checkPass()) return;
+
+let name=document.getElementById("playerName").value;
+
+players = players.filter(p =>
+p.name.toLowerCase() !== name.toLowerCase()
+);
+
+render();
+
+}
+
+
 
 render();
 
