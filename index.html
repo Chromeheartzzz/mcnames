@@ -78,16 +78,10 @@ background:#020617;
 border:1px solid #1e293b;
 border-radius:10px;
 cursor:pointer;
-transition:.2s;
-}
-
-.tab:hover{
-background:#1e293b;
 }
 
 .tab.active{
 background:#1e293b;
-box-shadow:0 0 10px rgba(255,255,255,0.1);
 }
 
 /* LIST */
@@ -159,12 +153,20 @@ justify-content:center;
 border-radius:8px;
 }
 
-.tier{
-background:linear-gradient(90deg,#e5e7eb,#9ca3af);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-font-weight:bold;
-}
+/* 🎨 TIER COLORS */
+.tier{font-weight:bold;}
+
+.tier.HT1{color:#E8BA3A;}
+.tier.HT2{color:#C4D3E7;}
+.tier.HT3{color:#F89F5A;}
+.tier.HT4{color:#81749A;}
+.tier.HT5{color:#8F82A8;}
+
+.tier.LT1{color:#D5B355;}
+.tier.LT2{color:#A8A7B2;}
+.tier.LT3{color:#C67B43;}
+.tier.LT4{color:#655B79;}
+.tier.LT5{color:#655B79;}
 
 /* ADMIN PANEL */
 .panel{
@@ -229,26 +231,22 @@ background:#5865F2;
 <div class="tab" data-mode="2">🪓</div>
 <div class="tab" data-mode="3">🛡️</div>
 <div class="tab" data-mode="4">❤️</div>
-<div class="tab" data-mode="5">🧪</div>
+<div class="tab" data-mode="5">🔨</div>
 <div class="tab" data-mode="6">♟️</div>
 <div class="tab" data-mode="7">💎</div>
 </div>
 
 <div class="container" id="list"></div>
 
-<!-- ADMIN PANEL -->
-<div class="panel" id="panel">
-<input id="name" placeholder="Player Name">
-<input id="tiers" placeholder="HT1,LT1,HT2...">
-<button onclick="addPlayer()">Add Player</button>
-<button onclick="removePlayer()">Remove Player</button>
-<button onclick="updatePlayer()">Update Tiers</button>
-<button onclick="togglePanel()">Close</button>
-</div>
-
 <script>
 
-const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+/* 🔥 TIER RANKING SYSTEM */
+const tierRank = {
+HT1:10, HT2:9, HT3:8, HT4:7, HT5:6,
+LT1:5, LT2:4, LT3:3, LT4:2, LT5:1
+};
+
+const modes = ["🔮","🗡","🪓","🛡️","❤️","🔨","♟️","💎"];
 let currentMode = "overall";
 
 let players = [
@@ -259,7 +257,6 @@ let players = [
 const list = document.getElementById("list");
 const search = document.querySelector(".search");
 
-/* RENDER */
 function render(filter=""){
 list.innerHTML="";
 
@@ -267,10 +264,10 @@ let filtered = players.filter(p =>
 p.name.toLowerCase().includes(filter.toLowerCase())
 );
 
-/* SORT BY MODE */
+/* 🔥 SORT CORRECTLY */
 if(currentMode !== "overall"){
 filtered.sort((a,b)=>{
-return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
+return tierRank[b.tiers[currentMode]] - tierRank[a.tiers[currentMode]];
 });
 }
 
@@ -283,7 +280,7 @@ if(currentMode === "overall"){
 content = modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
-<div class="tier">${p.tiers[index]}</div>
+<div class="tier ${p.tiers[index]}">${p.tiers[index]}</div>
 </div>`).join("");
 }
 
@@ -292,7 +289,7 @@ else{
 content = `
 <div class="mode">
 <div class="icon">${modes[currentMode]}</div>
-<div class="tier">${p.tiers[currentMode]}</div>
+<div class="tier ${p.tiers[currentMode]}">${p.tiers[currentMode]}</div>
 </div>`;
 }
 
@@ -320,10 +317,9 @@ render();
 /* SEARCH */
 search.addEventListener("input", e=>render(e.target.value));
 
-/* TAB CLICK */
+/* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
-tab.addEventListener("click",()=>{
-
+tab.onclick=()=>{
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 tab.classList.add("active");
 
@@ -332,35 +328,12 @@ currentMode = tab.dataset.mode === "overall"
 : Number(tab.dataset.mode);
 
 render(search.value);
-
-});
+};
 });
 
 /* ADMIN */
 function togglePanel(){
-let p = document.getElementById("panel");
-p.style.display = p.style.display==="flex" ? "none":"flex";
-}
-
-function addPlayer(){
-let name = document.getElementById("name").value;
-let tiers = document.getElementById("tiers").value.split(",");
-players.push({name,tiers});
-render();
-}
-
-function removePlayer(){
-let name = document.getElementById("name").value;
-players = players.filter(p=>p.name!==name);
-render();
-}
-
-function updatePlayer(){
-let name = document.getElementById("name").value;
-let tiers = document.getElementById("tiers").value.split(",");
-let p = players.find(p=>p.name===name);
-if(p) p.tiers = tiers;
-render();
+alert("Admin panel still enabled in your version");
 }
 
 </script>
