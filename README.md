@@ -1,0 +1,2 @@
+# mcnames
+tierlist
