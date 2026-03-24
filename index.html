@@ -14,6 +14,7 @@ background:#020617;
 color:white;
 }
 
+/* HEADER */
 header{
 font-size:48px;
 text-align:center;
@@ -24,40 +25,64 @@ background:linear-gradient(90deg,#d9d9d9,#ffffff,#9ca3af,#e5e7eb);
 -webkit-text-fill-color:transparent;
 }
 
+/* TOP BAR */
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 20px;
+background:#020617;
+border-bottom:1px solid #111827;
+}
+
+/* GAMEMODES */
+.modes{
+display:flex;
+gap:10px;
+}
+
+.mode{
+width:40px;
+height:40px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+background:#111827;
+cursor:pointer;
+transition:0.2s;
+font-size:18px;
+}
+
+.mode.active{
+background:#2563eb;
+}
+
+/* ADMIN PANEL */
+.admin{
+display:flex;
+gap:10px;
+}
+
+.admin button{
+padding:6px 10px;
+border:none;
+border-radius:6px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+/* TABLE */
 .container{
 max-width:1000px;
 margin:auto;
 padding:10px;
 }
 
-/* Gamemode buttons */
-.modes{
-display:flex;
-justify-content:center;
-gap:10px;
-margin-bottom:15px;
-}
-
-.modes button{
-font-size:18px;
-padding:10px;
-border-radius:10px;
-background:#111827;
-border:none;
-color:white;
-cursor:pointer;
-transition:0.2s;
-}
-
-.modes button:hover{
-background:#2563eb;
-}
-
-/* Table */
 table{
 width:100%;
 border-collapse:collapse;
-background:#020617;
 }
 
 th{
@@ -74,23 +99,18 @@ tr:nth-child(even){
 background:#0f172a;
 }
 
-img{
-border-radius:6px;
-}
-
-/* Buttons */
-.action-btn{
-padding:6px 10px;
-margin:2px;
-border:none;
-border-radius:6px;
-background:#2563eb;
-color:white;
+tr:hover{
+background:#1f2937;
 cursor:pointer;
 }
 
-.action-btn:hover{
-background:#1d4ed8;
+.selected{
+outline:2px solid #2563eb;
+}
+
+/* SKIN */
+img{
+border-radius:6px;
 }
 
 </style>
@@ -100,23 +120,32 @@ background:#1d4ed8;
 
 <header>ChromeTiers</header>
 
-<div class="container">
+<div class="topbar">
 
-<!-- GAMEMODE SELECTOR -->
+<!-- GAMEMODE ICONS -->
 <div class="modes">
 
-<button onclick="setMode('crystal')">💎</button>
-<button onclick="setMode('smp')">🛡</button>
-<button onclick="setMode('axe')">🪓</button>
-<button onclick="setMode('sword')">⚔</button>
-<button onclick="setMode('mace')">🔨</button>
-<button onclick="setMode('uhc')">❤️</button>
-<button onclick="setMode('netpot')">🧪</button>
-<button onclick="setMode('diapot')">💠</button>
+<div class="mode active" onclick="setMode('crystal',this)">💎</div>
+<div class="mode" onclick="setMode('smp',this)">🛡️</div>
+<div class="mode" onclick="setMode('axe',this)">🪓</div>
+<div class="mode" onclick="setMode('sword',this)">🗡</div>
+<div class="mode" onclick="setMode('mace',this)">🔨</div>
+<div class="mode" onclick="setMode('uhc',this)">❤️</div>
+<div class="mode" onclick="setMode('netpot',this)">♟️</div>
+<div class="mode" onclick="setMode('diapot',this)">💎</div>
 
 </div>
 
-<!-- TABLE -->
+<!-- ADMIN BUTTONS -->
+<div class="admin">
+<button onclick="editSelected()">Edit Tier</button>
+<button onclick="removeSelected()">Remove</button>
+</div>
+
+</div>
+
+<div class="container">
+
 <table>
 
 <thead>
@@ -124,12 +153,10 @@ background:#1d4ed8;
 <th>Player</th>
 <th>Name</th>
 <th>Tier</th>
-<th>Actions</th>
 </tr>
 </thead>
 
-<tbody id="leaderboardBody">
-</tbody>
+<tbody id="leaderboardBody"></tbody>
 
 </table>
 
@@ -137,60 +164,40 @@ background:#1d4ed8;
 
 <script>
 
-// 🔐 CHANGE PASSWORD HERE
-const ADMIN_PASSWORD = "chrome123";
+// PASSWORD
+const ADMIN_PASSWORD = "Chromepassword";
 
-// Current gamemode
 let currentMode = "crystal";
+let selectedPlayer = null;
 
-// Player data
 let players = [
-
 {
 name:"ChromeKing",
-tiers:{
-crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""
-}
+tiers:{crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""}
 },
-
 {
 name:"SkyPvP",
-tiers:{
-crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""
+tiers:{crystal:"",smp:"",axe:"",sword:"",mace:"",uhc:"",netpot:"",diapot:""}
 }
-}
-
 ];
 
-// DOM
 const body = document.getElementById("leaderboardBody");
 
-// Render leaderboard
+// RENDER
 function render(){
 
 body.innerHTML="";
 
 players.forEach(p=>{
 
-let tier = p.tiers[currentMode];
-
 let row=document.createElement("tr");
 
+row.onclick=()=>selectPlayer(p,row);
+
 row.innerHTML=`
-
-<td>
-<img src="https://mc-heads.net/avatar/${p.name}" width="30">
-</td>
-
+<td><img src="https://mc-heads.net/avatar/${p.name}" width="30"></td>
 <td>${p.name}</td>
-
-<td>${tier || "-"}</td>
-
-<td>
-<button class="action-btn" onclick="editTier('${p.name}')">Edit</button>
-<button class="action-btn" onclick="removePlayer('${p.name}')">Remove</button>
-</td>
-
+<td>${p.tiers[currentMode] || "-"}</td>
 `;
 
 body.appendChild(row);
@@ -199,19 +206,38 @@ body.appendChild(row);
 
 }
 
-// Switch gamemode
-function setMode(mode){
+// SELECT PLAYER
+function selectPlayer(player,row){
+
+selectedPlayer = player;
+
+document.querySelectorAll("tr").forEach(r=>r.classList.remove("selected"));
+
+row.classList.add("selected");
+
+}
+
+// CHANGE MODE
+function setMode(mode,el){
 
 currentMode = mode;
+
+document.querySelectorAll(".mode").forEach(m=>m.classList.remove("active"));
+el.classList.add("active");
 
 render();
 
 }
 
-// Edit tier
-function editTier(name){
+// EDIT SELECTED
+function editSelected(){
 
-let pass = prompt("Enter password");
+if(!selectedPlayer){
+alert("Select a player first");
+return;
+}
+
+let pass = prompt("Password");
 
 if(pass !== ADMIN_PASSWORD){
 alert("Wrong password");
@@ -222,37 +248,36 @@ let tier = prompt("Enter new tier");
 
 if(!tier) return;
 
-players.forEach(p=>{
-
-if(p.name === name){
-
-p.tiers[currentMode] = tier;
-
-}
-
-});
+selectedPlayer.tiers[currentMode] = tier;
 
 render();
 
 }
 
-// Remove player
-function removePlayer(name){
+// REMOVE SELECTED
+function removeSelected(){
 
-let pass = prompt("Enter password");
+if(!selectedPlayer){
+alert("Select a player first");
+return;
+}
+
+let pass = prompt("Password");
 
 if(pass !== ADMIN_PASSWORD){
 alert("Wrong password");
 return;
 }
 
-players = players.filter(p => p.name !== name);
+players = players.filter(p => p !== selectedPlayer);
+
+selectedPlayer = null;
 
 render();
 
 }
 
-// Initial render
+// INIT
 render();
 
 </script>
