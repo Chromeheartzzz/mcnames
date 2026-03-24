@@ -17,13 +17,14 @@ color:white;
 /* NAV */
 .nav{
 display:flex;
-justify-content:space-between;
 align-items:center;
 padding:16px 25px;
 background:#0f172a;
 border-bottom:1px solid #1e293b;
+position:relative;
 }
 
+/* LEFT LOGO */
 .logo{
 font-size:24px;
 font-weight:bold;
@@ -32,10 +33,19 @@ background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
 -webkit-text-fill-color:transparent;
 }
 
-.top-right{
+/* 🔥 CENTER BUTTONS */
+.nav-center{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
 display:flex;
-align-items:center;
 gap:15px;
+align-items:center;
+}
+
+/* RIGHT SEARCH */
+.nav-right{
+margin-left:auto;
 }
 
 .top-btn{
@@ -49,7 +59,6 @@ cursor:pointer;
 background:#5865F2;
 }
 
-/* SEARCH */
 .search{
 padding:10px;
 border-radius:10px;
@@ -58,11 +67,10 @@ background:#020617;
 color:white;
 }
 
-/* ✅ CENTERED TABS */
+/* TABS */
 .tabs{
 display:flex;
-justify-content:center;   /* CENTER FIX */
-align-items:center;
+justify-content:center;
 gap:10px;
 padding:15px;
 flex-wrap:wrap;
@@ -74,16 +82,10 @@ background:#020617;
 border:1px solid #1e293b;
 border-radius:10px;
 cursor:pointer;
-transition:.2s;
-}
-
-.tab:hover{
-background:#1e293b;
 }
 
 .tab.active{
 background:#1e293b;
-box-shadow:0 0 10px rgba(255,255,255,0.1);
 }
 
 /* LIST */
@@ -133,7 +135,6 @@ transition:.2s;
 transform:scale(1.15);
 }
 
-/* CENTER ICONS IN ROW */
 .modes{
 display:flex;
 justify-content:center;
@@ -208,16 +209,23 @@ background:#5865F2;
 
 <!-- NAV -->
 <div class="nav">
+
 <div class="logo">ChromeTiers</div>
 
-<div class="top-right">
+<!-- CENTER -->
+<div class="nav-center">
 <div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
 <div class="top-btn" onclick="togglePanel()">Admin Panel</div>
-<input class="search" placeholder="Search...">
-</div>
 </div>
 
-<!-- CENTERED TABS -->
+<!-- RIGHT -->
+<div class="nav-right">
+<input class="search" placeholder="Search...">
+</div>
+
+</div>
+
+<!-- TABS -->
 <div class="tabs">
 <div class="tab active" data-mode="overall">🏆 Overall</div>
 <div class="tab" data-mode="0">🔮</div>
@@ -245,7 +253,6 @@ background:#5865F2;
 <script>
 
 const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
-let currentMode = "overall";
 
 let players = [
 {name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
