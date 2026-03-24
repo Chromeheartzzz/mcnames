@@ -14,59 +14,46 @@ background:#0b1220;
 color:white;
 }
 
-/* NAVBAR */
+/* NAV */
 .nav{
 display:flex;
-align-items:center;
 justify-content:space-between;
-padding:16px 30px;
+align-items:center;
+padding:16px 25px;
 background:#0f172a;
 border-bottom:1px solid #1e293b;
 }
 
 .logo{
+font-size:24px;
 font-weight:bold;
-font-size:26px;
 background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-.nav-links{
-display:flex;
-gap:25px;
-align-items:center;
-font-size:16px;
-}
-
-.nav-links span{
-opacity:.7;
-cursor:pointer;
-}
-
 .search{
-background:#020617;
-border:1px solid #1e293b;
-padding:10px 14px;
+padding:10px;
 border-radius:10px;
+border:1px solid #1e293b;
+background:#020617;
 color:white;
-font-size:14px;
 }
 
 /* TABS */
 .tabs{
 display:flex;
-gap:12px;
-padding:20px;
+gap:10px;
+padding:15px;
+flex-wrap:wrap;
 }
 
 .tab{
-padding:12px 18px;
-border-radius:12px;
+padding:10px 15px;
 background:#020617;
 border:1px solid #1e293b;
+border-radius:10px;
 cursor:pointer;
-font-size:14px;
 }
 
 .tab.active{
@@ -75,32 +62,31 @@ background:#1e293b;
 
 /* LIST */
 .container{
-max-width:1300px;
+max-width:1200px;
 margin:auto;
 }
 
 .row{
 display:flex;
-align-items:center;
 justify-content:space-between;
-padding:20px;
-margin:12px 0;
+align-items:center;
+padding:18px;
+margin:10px 0;
 background:#0f172a;
-border-radius:16px;
+border-radius:14px;
 border:1px solid #1e293b;
 }
 
-/* LEFT SIDE */
 .left{
 display:flex;
 align-items:center;
-gap:20px;
+gap:15px;
 }
 
 .rank{
-font-size:28px;
+font-size:24px;
 font-weight:bold;
-background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+background:linear-gradient(90deg,#e5e7eb,#9ca3af);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
@@ -112,43 +98,57 @@ gap:12px;
 }
 
 .name{
-font-size:22px;
+font-size:20px;
 font-weight:bold;
+transition:.2s;
+cursor:pointer;
 }
 
-/* MODES */
+.name:hover{
+transform:scale(1.15);
+}
+
 .modes{
 display:flex;
-gap:14px;
+gap:10px;
 }
 
 .mode{
 display:flex;
 flex-direction:column;
 align-items:center;
-font-size:14px;
+font-size:12px;
 }
 
 .icon{
-width:40px;
-height:40px;
+width:36px;
+height:36px;
+background:#020617;
 display:flex;
 align-items:center;
 justify-content:center;
-border-radius:10px;
-background:#020617;
-font-size:18px;
+border-radius:8px;
 }
 
 .tier{
-font-weight:bold;
-background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+background:linear-gradient(90deg,#e5e7eb,#9ca3af);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
+font-weight:bold;
 }
 
-img{
+/* DISCORD */
+.discord{
+margin-left:20px;
+padding:8px 12px;
+background:#1e293b;
 border-radius:8px;
+cursor:pointer;
+transition:.2s;
+}
+
+.discord:hover{
+background:#5865F2;
 }
 
 </style>
@@ -156,43 +156,31 @@ border-radius:8px;
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
-
 <div class="logo">ChromeTiers</div>
-
-<div class="nav-links">
-<span>Home</span>
-<span style="opacity:1;">🏆 Rankings</span>
-<span>🎮 Discords</span>
-<span style="color:#60a5fa;">Admin Panel</span>
-</div>
-
 <input class="search" placeholder="Search player...">
-
 </div>
 
 <!-- TABS -->
-<div class="tabs">
-<div class="tab active">🏆 Overall</div>
-<div class="tab">⚔ LTMs</div>
-<div class="tab">🛡 Vanilla</div>
-<div class="tab">❤️ UHC</div>
-<div class="tab">🧪 Pot</div>
-<div class="tab">💀 NethOP</div>
-<div class="tab">🌐 SMP</div>
-<div class="tab">🗡 Sword</div>
-<div class="tab">🪓 Axe</div>
-<div class="tab">🔨 Mace</div>
+<div class="tabs" id="tabs">
+<div class="tab active" data-mode="overall">🏆 Overall</div>
+<div class="tab" data-mode="0">🔮</div>
+<div class="tab" data-mode="1">🗡</div>
+<div class="tab" data-mode="2">🪓</div>
+<div class="tab" data-mode="3">🛡️</div>
+<div class="tab" data-mode="4">❤️</div>
+<div class="tab" data-mode="5">🧪</div>
+<div class="tab" data-mode="6">♟️</div>
+<div class="tab" data-mode="7">💎</div>
 </div>
 
 <div class="container" id="list"></div>
 
 <script>
 
-const modes = [
-"🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"
-];
+const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+
+let currentMode = "overall";
 
 let players = [
 {name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
@@ -202,22 +190,49 @@ let players = [
 ];
 
 const list = document.getElementById("list");
+const search = document.querySelector(".search");
 
-function render(){
+/* RENDER */
+function render(filter=""){
 
 list.innerHTML="";
 
-players.forEach((p,i)=>{
+let filtered = players.filter(p =>
+p.name.toLowerCase().includes(filter.toLowerCase())
+);
 
-let modesHTML = modes.map((icon,index)=>`
+/* SORT IF MODE SELECTED */
+if(currentMode !== "overall"){
+filtered.sort((a,b)=>{
+return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
+});
+}
+
+filtered.forEach((p,i)=>{
+
+let content = "";
+
+/* SHOW ALL MODES */
+if(currentMode === "overall"){
+content = modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier">${p.tiers[index]}</div>
 </div>
 `).join("");
+}
+
+/* SHOW ONE MODE */
+else{
+content = `
+<div class="mode">
+<div class="icon">${modes[currentMode]}</div>
+<div class="tier">${p.tiers[currentMode]}</div>
+</div>
+`;
+}
 
 let row = document.createElement("div");
-
 row.className="row";
 
 row.innerHTML=`
@@ -225,12 +240,18 @@ row.innerHTML=`
 <div class="rank">${i+1}.</div>
 
 <div class="player">
-<img src="https://mc-heads.net/avatar/${p.name}" width="48">
+<img src="https://mc-heads.net/avatar/${p.name}" width="46">
 <div class="name">${p.name}</div>
 </div>
 </div>
 
-<div class="modes">${modesHTML}</div>
+<div style="display:flex;align-items:center;">
+<div class="modes">${content}</div>
+
+<div class="discord" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">
+Discord
+</div>
+</div>
 `;
 
 list.appendChild(row);
@@ -240,6 +261,27 @@ list.appendChild(row);
 }
 
 render();
+
+/* SEARCH */
+search.addEventListener("input", e=>{
+render(e.target.value);
+});
+
+/* TAB SWITCH */
+document.querySelectorAll(".tab").forEach(tab=>{
+tab.addEventListener("click", ()=>{
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+tab.classList.add("active");
+
+currentMode = tab.dataset.mode === "overall"
+? "overall"
+: Number(tab.dataset.mode);
+
+render(search.value);
+
+});
+});
 
 </script>
 
