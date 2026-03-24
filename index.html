@@ -69,6 +69,7 @@ display:flex;
 justify-content:center;
 gap:10px;
 padding:15px;
+flex-wrap:wrap;
 }
 
 .tab{
@@ -77,10 +78,16 @@ background:#020617;
 border:1px solid #1e293b;
 border-radius:10px;
 cursor:pointer;
+transition:.2s;
+}
+
+.tab:hover{
+background:#1e293b;
 }
 
 .tab.active{
 background:#1e293b;
+box-shadow:0 0 10px rgba(255,255,255,0.1);
 }
 
 /* LIST */
@@ -99,7 +106,6 @@ border-radius:14px;
 border:1px solid #1e293b;
 }
 
-/* LEFT SIDE */
 .left{
 display:flex;
 align-items:center;
@@ -130,14 +136,13 @@ transition:.2s;
 transform:scale(1.15);
 }
 
-/* 🔥 RIGHT ALIGN FIX */
+/* RIGHT SIDE */
 .modes{
 display:flex;
 gap:12px;
-margin-left:auto; /* pushes to right */
+margin-left:auto;
 }
 
-/* ICONS */
 .mode{
 display:flex;
 flex-direction:column;
@@ -218,15 +223,15 @@ background:#5865F2;
 
 <!-- TABS -->
 <div class="tabs">
-<div class="tab active">🏆 Overall</div>
-<div class="tab">🔮</div>
-<div class="tab">🗡</div>
-<div class="tab">🪓</div>
-<div class="tab">🛡️</div>
-<div class="tab">❤️</div>
-<div class="tab">🧪</div>
-<div class="tab">♟️</div>
-<div class="tab">💎</div>
+<div class="tab active" data-mode="overall">🏆 Overall</div>
+<div class="tab" data-mode="0">🔮</div>
+<div class="tab" data-mode="1">🗡</div>
+<div class="tab" data-mode="2">🪓</div>
+<div class="tab" data-mode="3">🛡️</div>
+<div class="tab" data-mode="4">❤️</div>
+<div class="tab" data-mode="5">🧪</div>
+<div class="tab" data-mode="6">♟️</div>
+<div class="tab" data-mode="7">💎</div>
 </div>
 
 <div class="container" id="list"></div>
@@ -244,6 +249,7 @@ background:#5865F2;
 <script>
 
 const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+let currentMode = "overall";
 
 let players = [
 {name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
@@ -253,6 +259,7 @@ let players = [
 const list = document.getElementById("list");
 const search = document.querySelector(".search");
 
+/* RENDER */
 function render(filter=""){
 list.innerHTML="";
 
@@ -260,14 +267,34 @@ let filtered = players.filter(p =>
 p.name.toLowerCase().includes(filter.toLowerCase())
 );
 
+/* SORT BY MODE */
+if(currentMode !== "overall"){
+filtered.sort((a,b)=>{
+return b.tiers[currentMode].localeCompare(a.tiers[currentMode]);
+});
+}
+
 filtered.forEach((p,i)=>{
 
-let modesHTML = modes.map((icon,index)=>`
+let content = "";
+
+/* OVERALL */
+if(currentMode === "overall"){
+content = modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier">${p.tiers[index]}</div>
-</div>
-`).join("");
+</div>`).join("");
+}
+
+/* SINGLE MODE */
+else{
+content = `
+<div class="mode">
+<div class="icon">${modes[currentMode]}</div>
+<div class="tier">${p.tiers[currentMode]}</div>
+</div>`;
+}
 
 let row = document.createElement("div");
 row.className="row";
@@ -281,7 +308,7 @@ row.innerHTML=`
 </div>
 </div>
 
-<div class="modes">${modesHTML}</div>
+<div class="modes">${content}</div>
 `;
 
 list.appendChild(row);
@@ -290,8 +317,26 @@ list.appendChild(row);
 
 render();
 
+/* SEARCH */
 search.addEventListener("input", e=>render(e.target.value));
 
+/* TAB CLICK */
+document.querySelectorAll(".tab").forEach(tab=>{
+tab.addEventListener("click",()=>{
+
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+tab.classList.add("active");
+
+currentMode = tab.dataset.mode === "overall"
+? "overall"
+: Number(tab.dataset.mode);
+
+render(search.value);
+
+});
+});
+
+/* ADMIN */
 function togglePanel(){
 let p = document.getElementById("panel");
 p.style.display = p.style.display==="flex" ? "none":"flex";
