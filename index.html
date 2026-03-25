@@ -161,7 +161,7 @@ border-radius:8px;
 .tier.LT4{color:#655B79;}
 .tier.LT5{color:#655B79;}
 
-/* LOGIN POPUP */
+/* POPUP */
 .popup{
 position:fixed;
 top:0;
@@ -238,7 +238,6 @@ cursor:pointer;
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
 
@@ -252,6 +251,7 @@ cursor:pointer;
 </div>
 </div>
 
+<!-- TABS -->
 <div class="tabs">
 <div class="tab active" data-mode="overall">🏆 Overall</div>
 <div class="tab" data-mode="0">🔮</div>
@@ -266,7 +266,7 @@ cursor:pointer;
 
 <div class="container" id="list"></div>
 
-<!-- LOGIN POPUP -->
+<!-- LOGIN -->
 <div class="popup" id="loginPopup">
 <div class="popup-box">
 <input id="password" type="password" placeholder="Enter password">
@@ -274,7 +274,7 @@ cursor:pointer;
 </div>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div class="panel" id="panel">
 <input id="name" placeholder="Player Name">
 <input id="tiers" placeholder="HT1,LT1,HT2...">
@@ -286,43 +286,57 @@ cursor:pointer;
 
 <script>
 
-const PASSWORD = "Iamthebestplayereverchromehearts";
+const PASSWORD="Iamthebestplayereverchromehearts";
 
-const tierRank = {
+/* ORDER */
+const tierRank={
 LT5:1,HT5:2,LT4:3,HT4:4,LT3:5,HT3:6,LT2:7,HT2:8,LT1:9,HT1:10
 };
 
-const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
-let currentMode = "overall";
+const modes=["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+let currentMode="overall";
 
-let players = [
+let players=[
 {name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
 {name:"SkyPvP",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]}
 ];
 
-const list = document.getElementById("list");
+const list=document.getElementById("list");
 
 /* RENDER */
-function render(){
+function render(filter=""){
 list.innerHTML="";
 
-let sorted=[...players];
+let filtered=players.filter(p=>
+p.name.toLowerCase().includes(filter.toLowerCase())
+);
 
+/* SORT WHEN MODE SELECTED */
 if(currentMode!=="overall"){
-sorted.sort((a,b)=> tierRank[b.tiers[currentMode]]-tierRank[a.tiers[currentMode]]);
+filtered.sort((a,b)=>tierRank[b.tiers[currentMode]]-tierRank[a.tiers[currentMode]]);
 }
 
-sorted.forEach((p,i)=>{
-let content=currentMode==="overall"
-? modes.map((icon,index)=>`
+filtered.forEach((p,i)=>{
+
+let content="";
+
+/* OVERALL */
+if(currentMode==="overall"){
+content=modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier ${p.tiers[index]}">${p.tiers[index]}</div>
-</div>`).join("")
-: `<div class="mode">
+</div>`).join("");
+}
+
+/* SINGLE MODE */
+else{
+content=`
+<div class="mode">
 <div class="icon">${modes[currentMode]}</div>
 <div class="tier ${p.tiers[currentMode]}">${p.tiers[currentMode]}</div>
 </div>`;
+}
 
 list.innerHTML+=`
 <div class="row">
@@ -340,6 +354,25 @@ list.innerHTML+=`
 
 render();
 
+/* SEARCH */
+document.querySelector(".search").addEventListener("input",e=>{
+render(e.target.value);
+});
+
+/* TABS */
+document.querySelectorAll(".tab").forEach(tab=>{
+tab.onclick=()=>{
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+tab.classList.add("active");
+
+currentMode=tab.dataset.mode==="overall"
+? "overall"
+: Number(tab.dataset.mode);
+
+render(document.querySelector(".search").value);
+};
+});
+
 /* LOGIN */
 function openLogin(){
 document.getElementById("loginPopup").style.display="flex";
@@ -348,36 +381,34 @@ document.getElementById("loginPopup").style.display="flex";
 function checkPassword(){
 let input=document.getElementById("password").value;
 if(input===PASSWORD){
-document.getElementById("loginPopup").style.display="none";
-document.getElementById("panel").style.display="flex";
+loginPopup.style.display="none";
+panel.style.display="flex";
 }else{
 alert("Wrong password");
 }
 }
 
 /* ADMIN */
-function closePanel(){
-document.getElementById("panel").style.display="none";
-}
+function closePanel(){panel.style.display="none";}
 
 function addPlayer(){
-let name=document.getElementById("name").value;
-let tiers=document.getElementById("tiers").value.split(",");
+let name=nameInput.value;
+let tiers=tiersInput.value.split(",");
 players.push({name,tiers});
 render();
 }
 
 function removePlayer(){
-let name=document.getElementById("name").value;
+let name=nameInput.value;
 players=players.filter(p=>p.name!==name);
 render();
 }
 
 function updatePlayer(){
-let name=document.getElementById("name").value;
-let tiers=document.getElementById("tiers").value.split(",");
+let name=nameInput.value;
+let tiers=tiersInput.value.split(",");
 let p=players.find(p=>p.name===name);
-if(p) p.tiers=tiers;
+if(p)p.tiers=tiers;
 render();
 }
 
