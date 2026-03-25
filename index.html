@@ -8,6 +8,7 @@
 <style>
 body{margin:0;font-family:Arial;background:#0b1220;color:white;}
 
+/* NAV */
 .nav{display:flex;align-items:center;padding:16px 25px;background:#0f172a;position:relative;}
 .logo{font-size:24px;font-weight:bold;background:linear-gradient(90deg,#e5e7eb,#9ca3af);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:15px;}
@@ -15,10 +16,12 @@ body{margin:0;font-family:Arial;background:#0b1220;color:white;}
 .top-btn{padding:8px 12px;background:#1e293b;border-radius:8px;cursor:pointer;}
 .search{padding:10px;border-radius:10px;border:1px solid #1e293b;background:#020617;color:white;}
 
+/* TABS */
 .tabs{display:flex;justify-content:center;gap:10px;padding:15px;flex-wrap:wrap;}
 .tab{padding:10px 15px;background:#020617;border:1px solid #1e293b;border-radius:10px;cursor:pointer;}
 .tab.active{background:#1e293b;}
 
+/* LIST */
 .container{max-width:1200px;margin:auto;}
 .row{display:flex;align-items:center;padding:18px;margin:10px 0;background:#0f172a;border-radius:14px;}
 .left{display:flex;align-items:center;gap:15px;}
@@ -28,8 +31,10 @@ body{margin:0;font-family:Arial;background:#0b1220;color:white;}
 .mode{display:flex;flex-direction:column;align-items:center;}
 .icon{width:36px;height:36px;background:#020617;display:flex;align-items:center;justify-content:center;border-radius:8px;}
 
+/* POPUPS */
 .popup,.panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#020617;padding:20px;border-radius:12px;border:1px solid #1e293b;display:none;flex-direction:column;gap:10px;}
 .popup{top:0;left:0;width:100%;height:100%;transform:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.6);}
+
 input{padding:8px;background:#0f172a;border:1px solid #1e293b;color:white;border-radius:6px;}
 button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:pointer;}
 </style>
@@ -37,6 +42,7 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 
 <body>
 
+<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
 
@@ -60,7 +66,7 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 <div class="tab" data-mode="5">🧪</div>
 <div class="tab" data-mode="6">♟️</div>
 <div class="tab" data-mode="7">💎</div>
-<div class="tab" data-mode="8">🔨</div> <!-- NEW MACE TAB -->
+<div class="tab" data-mode="8">🔨</div>
 </div>
 
 <div class="container" id="list"></div>
@@ -68,7 +74,7 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 <!-- LOGIN -->
 <div class="popup" id="loginPopup">
 <div>
-<input id="password" type="password" placeholder="Password">
+<input id="password" type="password" placeholder="Enter password">
 <button onclick="login()">Enter</button>
 </div>
 </div>
@@ -77,7 +83,7 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 <div class="panel" id="panel">
 <input id="name" placeholder="Player Name">
 <input id="gamemode" placeholder="Gamemode (Axe, Sword...)">
-<input id="tiers" placeholder="Tier (HT1, LT1...)">
+<input id="tier" placeholder="Tier (HT1, LT1...)">
 
 <button onclick="addPlayer()">Add Player</button>
 <button onclick="removePlayer()">Remove Player</button>
@@ -89,7 +95,7 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 
 const PASSWORD="Iamthebestplayereverchromehearts";
 
-/* 🔥 GAMEMODE MAP */
+/* GAMEMODE MAP */
 const modeMap={
 "vanilla":0,
 "sword":1,
@@ -102,7 +108,6 @@ const modeMap={
 "mace":8
 };
 
-/* ICONS */
 const modes=["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎","🔨"];
 
 let players=[
@@ -113,13 +118,22 @@ let currentMode="overall";
 const list=document.getElementById("list");
 
 /* RENDER */
-function render(){
+function render(filter=""){
 list.innerHTML="";
-players.forEach((p,i)=>{
+
+let filtered=players.filter(p=>p.name.toLowerCase().includes(filter.toLowerCase()));
+
+filtered.forEach((p,i)=>{
 let content=currentMode==="overall"
 ? p.tiers.map((t,index)=>`
-<div class="mode"><div class="icon">${modes[index]}</div><div>${t}</div></div>`).join("")
-: `<div class="mode"><div class="icon">${modes[currentMode]}</div><div>${p.tiers[currentMode]}</div></div>`;
+<div class="mode">
+<div class="icon">${modes[index]}</div>
+<div>${t}</div>
+</div>`).join("")
+: `<div class="mode">
+<div class="icon">${modes[currentMode]}</div>
+<div>${p.tiers[currentMode]}</div>
+</div>`;
 
 list.innerHTML+=`
 <div class="row">
@@ -131,7 +145,13 @@ list.innerHTML+=`
 </div>`;
 });
 }
+
 render();
+
+/* SEARCH */
+document.querySelector(".search").addEventListener("input",e=>{
+render(e.target.value);
+});
 
 /* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
@@ -139,7 +159,7 @@ tab.onclick=()=>{
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 tab.classList.add("active");
 currentMode=tab.dataset.mode==="overall"?"overall":Number(tab.dataset.mode);
-render();
+render(document.querySelector(".search").value);
 };
 });
 
@@ -152,36 +172,29 @@ panel.style.display="flex";
 }else alert("Wrong password");
 }
 
-/* ✅ FIXED ADD */
+/* ADMIN FUNCTIONS */
 function addPlayer(){
 let name=document.getElementById("name").value.trim();
-if(!name) return;
+if(!name)return;
 
 if(players.find(p=>p.name.toLowerCase()===name.toLowerCase())){
-alert("Player exists");
-return;
+alert("Player already exists");return;
 }
 
-players.push({
-name,
-tiers:Array(9).fill("LT5")
-});
-
+players.push({name,tiers:Array(9).fill("LT5")});
 render();
 }
 
-/* ❌ FIXED REMOVE */
 function removePlayer(){
 let name=document.getElementById("name").value.trim().toLowerCase();
 players=players.filter(p=>p.name.toLowerCase()!==name);
 render();
 }
 
-/* 🔄 FIXED UPDATE */
 function updatePlayer(){
 let name=document.getElementById("name").value.trim().toLowerCase();
 let mode=document.getElementById("gamemode").value.trim().toLowerCase();
-let tier=document.getElementById("tiers").value.trim().toUpperCase();
+let tier=document.getElementById("tier").value.trim().toUpperCase();
 
 let player=players.find(p=>p.name.toLowerCase()===name);
 let index=modeMap[mode];
