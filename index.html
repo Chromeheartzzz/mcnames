@@ -161,7 +161,7 @@ border-radius:8px;
 .tier.LT4{color:#655B79;}
 .tier.LT5{color:#655B79;}
 
-/* POPUP */
+/* LOGIN POPUP */
 .popup{
 position:fixed;
 top:0;
@@ -238,6 +238,7 @@ cursor:pointer;
 
 <body>
 
+<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
 
@@ -258,7 +259,7 @@ cursor:pointer;
 <div class="tab" data-mode="2">🪓</div>
 <div class="tab" data-mode="3">🛡️</div>
 <div class="tab" data-mode="4">❤️</div>
-<div class="tab" data-mode="5">🧪</div>
+<div class="tab" data-mode="5">🔨</div>
 <div class="tab" data-mode="6">♟️</div>
 <div class="tab" data-mode="7">💎</div>
 </div>
@@ -268,7 +269,7 @@ cursor:pointer;
 <!-- LOGIN POPUP -->
 <div class="popup" id="loginPopup">
 <div class="popup-box">
-<input id="password" placeholder="Enter password">
+<input id="password" type="password" placeholder="Enter password">
 <button onclick="checkPassword()">Enter</button>
 </div>
 </div>
@@ -291,7 +292,7 @@ const tierRank = {
 LT5:1,HT5:2,LT4:3,HT4:4,LT3:5,HT3:6,LT2:7,HT2:8,LT1:9,HT1:10
 };
 
-const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+const modes = ["🔮","🗡","🪓","🛡️","❤️","🔨","♟️","💎"];
 let currentMode = "overall";
 
 let players = [
@@ -305,14 +306,14 @@ const list = document.getElementById("list");
 function render(){
 list.innerHTML="";
 
-let sorted = [...players];
+let sorted=[...players];
 
-if(currentMode !== "overall"){
-sorted.sort((a,b)=> tierRank[b.tiers[currentMode]] - tierRank[a.tiers[currentMode]]);
+if(currentMode!=="overall"){
+sorted.sort((a,b)=> tierRank[b.tiers[currentMode]]-tierRank[a.tiers[currentMode]]);
 }
 
 sorted.forEach((p,i)=>{
-let content = currentMode==="overall"
+let content=currentMode==="overall"
 ? modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
@@ -323,7 +324,7 @@ let content = currentMode==="overall"
 <div class="tier ${p.tiers[currentMode]}">${p.tiers[currentMode]}</div>
 </div>`;
 
-list.innerHTML += `
+list.innerHTML+=`
 <div class="row">
 <div class="left">
 <div class="rank">${i+1}.</div>
@@ -339,24 +340,14 @@ list.innerHTML += `
 
 render();
 
-/* TABS */
-document.querySelectorAll(".tab").forEach(tab=>{
-tab.onclick=()=>{
-document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-tab.classList.add("active");
-currentMode = tab.dataset.mode==="overall"?"overall":Number(tab.dataset.mode);
-render();
-};
-});
-
 /* LOGIN */
 function openLogin(){
 document.getElementById("loginPopup").style.display="flex";
 }
 
 function checkPassword(){
-let input = document.getElementById("password").value;
-if(input === PASSWORD){
+let input=document.getElementById("password").value;
+if(input===PASSWORD){
 document.getElementById("loginPopup").style.display="none";
 document.getElementById("panel").style.display="flex";
 }else{
