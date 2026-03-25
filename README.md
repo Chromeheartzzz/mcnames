@@ -1,2 +1,2 @@
-# mcnames
-tierlist
+# Vanilla Tiers
+Best Upcoming Tierlist
