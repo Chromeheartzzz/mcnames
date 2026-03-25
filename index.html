@@ -6,47 +6,243 @@
 <title>ChromeTiers</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#0b1220;color:white;}
+
+body{
+margin:0;
+font-family:Arial;
+background:#0b1220;
+color:white;
+}
 
 /* NAV */
-.nav{display:flex;align-items:center;padding:16px 25px;background:#0f172a;position:relative;}
-.logo{font-size:24px;font-weight:bold;background:linear-gradient(90deg,#e5e7eb,#9ca3af);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:15px;}
-.nav-right{margin-left:auto;}
-.top-btn{padding:8px 12px;background:#1e293b;border-radius:8px;cursor:pointer;}
-.search{padding:10px;border-radius:10px;border:1px solid #1e293b;background:#020617;color:white;}
+.nav{
+display:flex;
+align-items:center;
+padding:16px 25px;
+background:#0f172a;
+border-bottom:1px solid #1e293b;
+position:relative;
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+background:linear-gradient(90deg,#e5e7eb,#9ca3af,#d1d5db);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.nav-center{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+display:flex;
+gap:15px;
+}
+
+.nav-right{
+margin-left:auto;
+}
+
+.top-btn{
+padding:8px 12px;
+background:#1e293b;
+border-radius:8px;
+cursor:pointer;
+}
+
+.top-btn:hover{
+background:#5865F2;
+}
+
+.search{
+padding:10px;
+border-radius:10px;
+border:1px solid #1e293b;
+background:#020617;
+color:white;
+}
 
 /* TABS */
-.tabs{display:flex;justify-content:center;gap:10px;padding:15px;flex-wrap:wrap;}
-.tab{padding:10px 15px;background:#020617;border:1px solid #1e293b;border-radius:10px;cursor:pointer;}
-.tab.active{background:#1e293b;}
+.tabs{
+display:flex;
+justify-content:center;
+gap:10px;
+padding:15px;
+flex-wrap:wrap;
+}
+
+.tab{
+padding:10px 15px;
+background:#020617;
+border:1px solid #1e293b;
+border-radius:10px;
+cursor:pointer;
+}
+
+.tab.active{
+background:#1e293b;
+}
 
 /* LIST */
-.container{max-width:1200px;margin:auto;}
-.row{display:flex;align-items:center;padding:18px;margin:10px 0;background:#0f172a;border-radius:14px;}
-.left{display:flex;align-items:center;gap:15px;}
-.rank{font-size:24px;font-weight:bold;}
-.player{display:flex;align-items:center;gap:12px;}
-.modes{display:flex;gap:12px;margin-left:auto;}
-.mode{display:flex;flex-direction:column;align-items:center;}
-.icon{width:36px;height:36px;background:#020617;display:flex;align-items:center;justify-content:center;border-radius:8px;}
+.container{
+max-width:1200px;
+margin:auto;
+}
 
-/* POPUPS */
-.popup,.panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#020617;padding:20px;border-radius:12px;border:1px solid #1e293b;display:none;flex-direction:column;gap:10px;}
-.popup{top:0;left:0;width:100%;height:100%;transform:none;justify-content:center;align-items:center;background:rgba(0,0,0,0.6);}
+.row{
+display:flex;
+align-items:center;
+padding:18px;
+margin:10px 0;
+background:#0f172a;
+border-radius:14px;
+border:1px solid #1e293b;
+}
 
-input{padding:8px;background:#0f172a;border:1px solid #1e293b;color:white;border-radius:6px;}
-button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:pointer;}
+.left{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.rank{
+font-size:24px;
+font-weight:bold;
+background:linear-gradient(90deg,#e5e7eb,#9ca3af);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.player{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.name{
+font-size:20px;
+font-weight:bold;
+}
+
+.modes{
+display:flex;
+gap:12px;
+margin-left:auto;
+}
+
+.mode{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.icon{
+width:36px;
+height:36px;
+background:#020617;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:8px;
+}
+
+.tier{font-weight:bold;}
+
+.tier.HT1{color:#E8BA3A;}
+.tier.HT2{color:#C4D3E7;}
+.tier.HT3{color:#F89F5A;}
+.tier.HT4{color:#81749A;}
+.tier.HT5{color:#8F82A8;}
+
+.tier.LT1{color:#D5B355;}
+.tier.LT2{color:#A8A7B2;}
+.tier.LT3{color:#C67B43;}
+.tier.LT4{color:#655B79;}
+.tier.LT5{color:#655B79;}
+
+/* POPUP */
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.popup-box{
+background:#020617;
+padding:20px;
+border-radius:12px;
+display:flex;
+flex-direction:column;
+gap:10px;
+border:1px solid #1e293b;
+}
+
+.popup input{
+padding:8px;
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+border-radius:6px;
+}
+
+.popup button{
+padding:8px;
+background:#1e293b;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* ADMIN PANEL */
+.panel{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#020617;
+padding:20px;
+border-radius:12px;
+border:1px solid #1e293b;
+flex-direction:column;
+gap:10px;
+z-index:1001;
+}
+
+.panel input{
+padding:8px;
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+border-radius:6px;
+}
+
+.panel button{
+padding:8px;
+background:#1e293b;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
 
 <div class="nav-center">
+<div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
 <div class="top-btn" onclick="openLogin()">Admin Panel</div>
 </div>
 
@@ -66,28 +262,25 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 <div class="tab" data-mode="5">🧪</div>
 <div class="tab" data-mode="6">♟️</div>
 <div class="tab" data-mode="7">💎</div>
-<div class="tab" data-mode="8">🔨</div>
 </div>
 
 <div class="container" id="list"></div>
 
 <!-- LOGIN -->
 <div class="popup" id="loginPopup">
-<div>
+<div class="popup-box">
 <input id="password" type="password" placeholder="Enter password">
-<button onclick="login()">Enter</button>
+<button onclick="checkPassword()">Enter</button>
 </div>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div class="panel" id="panel">
 <input id="name" placeholder="Player Name">
-<input id="gamemode" placeholder="Gamemode (Axe, Sword...)">
-<input id="tier" placeholder="Tier (HT1, LT1...)">
-
+<input id="tiers" placeholder="HT1,LT1,HT2...">
 <button onclick="addPlayer()">Add Player</button>
 <button onclick="removePlayer()">Remove Player</button>
-<button onclick="updatePlayer()">Update Tier</button>
+<button onclick="updatePlayer()">Update Tiers</button>
 <button onclick="closePanel()">Close</button>
 </div>
 
@@ -95,51 +288,64 @@ button{padding:8px;background:#1e293b;border:none;border-radius:6px;cursor:point
 
 const PASSWORD="Iamthebestplayereverchromehearts";
 
-/* GAMEMODE MAP */
-const modeMap={
-"vanilla":0,
-"sword":1,
-"axe":2,
-"smp":3,
-"uhc":4,
-"pot":5,
-"nethpot":6,
-"diapot":7,
-"mace":8
+/* ORDER */
+const tierRank={
+LT5:1,HT5:2,LT4:3,HT4:4,LT3:5,HT3:6,LT2:7,HT2:8,LT1:9,HT1:10
 };
 
-const modes=["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎","🔨"];
+const modes=["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
+let currentMode="overall";
 
 let players=[
-{name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1","LT5"]}
+{name:"ChromeKing",tiers:["HT1","HT1","LT1","HT1","HT1","HT1","LT1","LT1"]},
+{name:"SkyPvP",tiers:["HT2","LT1","HT2","HT1","LT1","HT2","HT1","LT1"]}
 ];
 
-let currentMode="overall";
 const list=document.getElementById("list");
 
 /* RENDER */
 function render(filter=""){
 list.innerHTML="";
 
-let filtered=players.filter(p=>p.name.toLowerCase().includes(filter.toLowerCase()));
+let filtered=players.filter(p=>
+p.name.toLowerCase().includes(filter.toLowerCase())
+);
+
+/* SORT WHEN MODE SELECTED */
+if(currentMode!=="overall"){
+filtered.sort((a,b)=>tierRank[b.tiers[currentMode]]-tierRank[a.tiers[currentMode]]);
+}
 
 filtered.forEach((p,i)=>{
-let content=currentMode==="overall"
-? p.tiers.map((t,index)=>`
+
+let content="";
+
+/* OVERALL */
+if(currentMode==="overall"){
+content=modes.map((icon,index)=>`
 <div class="mode">
-<div class="icon">${modes[index]}</div>
-<div>${t}</div>
-</div>`).join("")
-: `<div class="mode">
+<div class="icon">${icon}</div>
+<div class="tier ${p.tiers[index]}">${p.tiers[index]}</div>
+</div>`).join("");
+}
+
+/* SINGLE MODE */
+else{
+content=`
+<div class="mode">
 <div class="icon">${modes[currentMode]}</div>
-<div>${p.tiers[currentMode]}</div>
+<div class="tier ${p.tiers[currentMode]}">${p.tiers[currentMode]}</div>
 </div>`;
+}
 
 list.innerHTML+=`
 <div class="row">
 <div class="left">
 <div class="rank">${i+1}.</div>
-<div class="player">${p.name}</div>
+<div class="player">
+<img src="https://mc-heads.net/avatar/${p.name}" width="46">
+<div class="name">${p.name}</div>
+</div>
 </div>
 <div class="modes">${content}</div>
 </div>`;
@@ -158,55 +364,53 @@ document.querySelectorAll(".tab").forEach(tab=>{
 tab.onclick=()=>{
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 tab.classList.add("active");
-currentMode=tab.dataset.mode==="overall"?"overall":Number(tab.dataset.mode);
+
+currentMode=tab.dataset.mode==="overall"
+? "overall"
+: Number(tab.dataset.mode);
+
 render(document.querySelector(".search").value);
 };
 });
 
 /* LOGIN */
-function openLogin(){loginPopup.style.display="flex";}
-function login(){
-if(password.value===PASSWORD){
+function openLogin(){
+document.getElementById("loginPopup").style.display="flex";
+}
+
+function checkPassword(){
+let input=document.getElementById("password").value;
+if(input===PASSWORD){
 loginPopup.style.display="none";
 panel.style.display="flex";
-}else alert("Wrong password");
+}else{
+alert("Wrong password");
+}
 }
 
-/* ADMIN FUNCTIONS */
+/* ADMIN */
+function closePanel(){panel.style.display="none";}
+
 function addPlayer(){
-let name=document.getElementById("name").value.trim();
-if(!name)return;
-
-if(players.find(p=>p.name.toLowerCase()===name.toLowerCase())){
-alert("Player already exists");return;
-}
-
-players.push({name,tiers:Array(9).fill("LT5")});
+let name=nameInput.value;
+let tiers=tiersInput.value.split(",");
+players.push({name,tiers});
 render();
 }
 
 function removePlayer(){
-let name=document.getElementById("name").value.trim().toLowerCase();
-players=players.filter(p=>p.name.toLowerCase()!==name);
+let name=nameInput.value;
+players=players.filter(p=>p.name!==name);
 render();
 }
 
 function updatePlayer(){
-let name=document.getElementById("name").value.trim().toLowerCase();
-let mode=document.getElementById("gamemode").value.trim().toLowerCase();
-let tier=document.getElementById("tier").value.trim().toUpperCase();
-
-let player=players.find(p=>p.name.toLowerCase()===name);
-let index=modeMap[mode];
-
-if(!player){alert("Player not found");return;}
-if(index===undefined){alert("Invalid gamemode");return;}
-
-player.tiers[index]=tier;
+let name=nameInput.value;
+let tiers=tiersInput.value.split(",");
+let p=players.find(p=>p.name===name);
+if(p)p.tiers=tiers;
 render();
 }
-
-function closePanel(){panel.style.display="none";}
 
 </script>
 
