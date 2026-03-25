@@ -123,14 +123,8 @@ gap:12px;
 .name{
 font-size:20px;
 font-weight:bold;
-transition:.2s;
 }
 
-.name:hover{
-transform:scale(1.15);
-}
-
-/* RIGHT SIDE */
 .modes{
 display:flex;
 gap:12px;
@@ -153,7 +147,6 @@ justify-content:center;
 border-radius:8px;
 }
 
-/* 🎨 TIER COLORS */
 .tier{font-weight:bold;}
 
 .tier.HT1{color:#E8BA3A;}
@@ -168,18 +161,89 @@ border-radius:8px;
 .tier.LT4{color:#655B79;}
 .tier.LT5{color:#655B79;}
 
+/* POPUP */
+.popup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:1000;
+}
+
+.popup-box{
+background:#020617;
+padding:20px;
+border-radius:12px;
+display:flex;
+flex-direction:column;
+gap:10px;
+border:1px solid #1e293b;
+}
+
+.popup input{
+padding:8px;
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+border-radius:6px;
+}
+
+.popup button{
+padding:8px;
+background:#1e293b;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* ADMIN PANEL */
+.panel{
+display:none;
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#020617;
+padding:20px;
+border-radius:12px;
+border:1px solid #1e293b;
+flex-direction:column;
+gap:10px;
+z-index:1001;
+}
+
+.panel input{
+padding:8px;
+background:#0f172a;
+border:1px solid #1e293b;
+color:white;
+border-radius:6px;
+}
+
+.panel button{
+padding:8px;
+background:#1e293b;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
 <div class="logo">ChromeTiers</div>
 
 <div class="nav-center">
 <div class="top-btn" onclick="window.open('https://discord.gg/TUY9pZHD','_blank')">Discord</div>
-<div class="top-btn">Admin Panel</div>
+<div class="top-btn" onclick="openLogin()">Admin Panel</div>
 </div>
 
 <div class="nav-right">
@@ -187,7 +251,6 @@ border-radius:8px;
 </div>
 </div>
 
-<!-- TABS -->
 <div class="tabs">
 <div class="tab active" data-mode="overall">🏆 Overall</div>
 <div class="tab" data-mode="0">🔮</div>
@@ -195,30 +258,40 @@ border-radius:8px;
 <div class="tab" data-mode="2">🪓</div>
 <div class="tab" data-mode="3">🛡️</div>
 <div class="tab" data-mode="4">❤️</div>
-<div class="tab" data-mode="5">🔨</div>
+<div class="tab" data-mode="5">🧪</div>
 <div class="tab" data-mode="6">♟️</div>
 <div class="tab" data-mode="7">💎</div>
 </div>
 
 <div class="container" id="list"></div>
 
+<!-- LOGIN POPUP -->
+<div class="popup" id="loginPopup">
+<div class="popup-box">
+<input id="password" placeholder="Enter password">
+<button onclick="checkPassword()">Enter</button>
+</div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="panel" id="panel">
+<input id="name" placeholder="Player Name">
+<input id="tiers" placeholder="HT1,LT1,HT2...">
+<button onclick="addPlayer()">Add Player</button>
+<button onclick="removePlayer()">Remove Player</button>
+<button onclick="updatePlayer()">Update Tiers</button>
+<button onclick="closePanel()">Close</button>
+</div>
+
 <script>
 
-/* 🔥 CORRECT ORDER (LOW → HIGH) */
+const PASSWORD = "Iamthebestplayereverchromehearts";
+
 const tierRank = {
-LT5:1,
-HT5:2,
-LT4:3,
-HT4:4,
-LT3:5,
-HT3:6,
-LT2:7,
-HT2:8,
-LT1:9,
-HT1:10
+LT5:1,HT5:2,LT4:3,HT4:4,LT3:5,HT3:6,LT2:7,HT2:8,LT1:9,HT1:10
 };
 
-const modes = ["🔮","🗡","🪓","🛡️","❤️","🔨","♟️","💎"];
+const modes = ["🔮","🗡","🪓","🛡️","❤️","🧪","♟️","💎"];
 let currentMode = "overall";
 
 let players = [
@@ -227,48 +300,31 @@ let players = [
 ];
 
 const list = document.getElementById("list");
-const search = document.querySelector(".search");
 
-function render(filter=""){
+/* RENDER */
+function render(){
 list.innerHTML="";
 
-let filtered = players.filter(p =>
-p.name.toLowerCase().includes(filter.toLowerCase())
-);
+let sorted = [...players];
 
-/* 🔥 SORT USING YOUR ORDER */
 if(currentMode !== "overall"){
-filtered.sort((a,b)=>{
-return tierRank[b.tiers[currentMode]] - tierRank[a.tiers[currentMode]];
-});
+sorted.sort((a,b)=> tierRank[b.tiers[currentMode]] - tierRank[a.tiers[currentMode]]);
 }
 
-filtered.forEach((p,i)=>{
-
-let content = "";
-
-/* OVERALL */
-if(currentMode === "overall"){
-content = modes.map((icon,index)=>`
+sorted.forEach((p,i)=>{
+let content = currentMode==="overall"
+? modes.map((icon,index)=>`
 <div class="mode">
 <div class="icon">${icon}</div>
 <div class="tier ${p.tiers[index]}">${p.tiers[index]}</div>
-</div>`).join("");
-}
-
-/* SINGLE MODE */
-else{
-content = `
-<div class="mode">
+</div>`).join("")
+: `<div class="mode">
 <div class="icon">${modes[currentMode]}</div>
 <div class="tier ${p.tiers[currentMode]}">${p.tiers[currentMode]}</div>
 </div>`;
-}
 
-let row = document.createElement("div");
-row.className="row";
-
-row.innerHTML=`
+list.innerHTML += `
+<div class="row">
 <div class="left">
 <div class="rank">${i+1}.</div>
 <div class="player">
@@ -276,32 +332,63 @@ row.innerHTML=`
 <div class="name">${p.name}</div>
 </div>
 </div>
-
 <div class="modes">${content}</div>
-`;
-
-list.appendChild(row);
+</div>`;
 });
 }
 
 render();
-
-/* SEARCH */
-search.addEventListener("input", e=>render(e.target.value));
 
 /* TABS */
 document.querySelectorAll(".tab").forEach(tab=>{
 tab.onclick=()=>{
 document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
 tab.classList.add("active");
-
-currentMode = tab.dataset.mode === "overall"
-? "overall"
-: Number(tab.dataset.mode);
-
-render(search.value);
+currentMode = tab.dataset.mode==="overall"?"overall":Number(tab.dataset.mode);
+render();
 };
 });
+
+/* LOGIN */
+function openLogin(){
+document.getElementById("loginPopup").style.display="flex";
+}
+
+function checkPassword(){
+let input = document.getElementById("password").value;
+if(input === PASSWORD){
+document.getElementById("loginPopup").style.display="none";
+document.getElementById("panel").style.display="flex";
+}else{
+alert("Wrong password");
+}
+}
+
+/* ADMIN */
+function closePanel(){
+document.getElementById("panel").style.display="none";
+}
+
+function addPlayer(){
+let name=document.getElementById("name").value;
+let tiers=document.getElementById("tiers").value.split(",");
+players.push({name,tiers});
+render();
+}
+
+function removePlayer(){
+let name=document.getElementById("name").value;
+players=players.filter(p=>p.name!==name);
+render();
+}
+
+function updatePlayer(){
+let name=document.getElementById("name").value;
+let tiers=document.getElementById("tiers").value.split(",");
+let p=players.find(p=>p.name===name);
+if(p) p.tiers=tiers;
+render();
+}
 
 </script>
 
